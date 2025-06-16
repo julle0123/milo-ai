@@ -14,7 +14,11 @@ if os.getenv("LANGSMITH_TRACING") == "true":
     os.environ["LANGCHAIN_ENDPOINT"] = os.getenv("LANGSMITH_ENDPOINT")
     os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGSMITH_API_KEY")
 # LLM 클라이언트
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.1)
+llm = ChatOpenAI(
+    model="gpt-4o-mini",
+    temperature=0.1,
+    openai_api_key=settings.openai_api_key  # 이 부분!
+)
 embedding = OpenAIEmbeddings(model="text-embedding-3-small")
 
 # Qdrant 클라이언트
@@ -24,3 +28,4 @@ vectorstore = QdrantVectorStore(
     collection_name=settings.collection_name,
     embeddings=embedding
 )
+print("✅ OpenAI KEY:", settings.openai_api_key)

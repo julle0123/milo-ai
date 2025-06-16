@@ -1,9 +1,7 @@
-# ✅ models/chat_log.py
+# app/models/chat_log.py
 from sqlalchemy import Column, BigInteger, String, Text, DateTime, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
-
-Base = declarative_base()
+from app.models.base import Base  # ✅ 통합 Base 사용
 
 class ChatLog(Base):
     __tablename__ = "chat_log_TB"
