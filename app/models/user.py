@@ -1,7 +1,7 @@
 # app/models/user.py
 from sqlalchemy import Column, String, DateTime
 from datetime import datetime
-from app.models.base import Base  # ✅ 통합 Base 사용
+from app.models.base import Base  
 
 class User(Base):
     __tablename__ = "users_TB"

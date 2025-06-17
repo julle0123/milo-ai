@@ -1,7 +1,7 @@
 # app/models/daily_emotion_report.py
 from sqlalchemy import Column, BigInteger, String, Float, Text, DateTime, Date, ForeignKey, UniqueConstraint
 from datetime import datetime
-from app.models.base import Base  # ✅ 통합 Base 사용
+from app.models.base import Base 
 
 class DailyEmotionReport(Base):
     __tablename__ = "daily_emotion_report_TB"

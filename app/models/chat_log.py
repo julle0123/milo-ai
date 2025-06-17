@@ -1,7 +1,7 @@
 # app/models/chat_log.py
 from sqlalchemy import Column, BigInteger, String, Text, DateTime, ForeignKey
 from datetime import datetime
-from app.models.base import Base  # ✅ 통합 Base 사용
+from app.models.base import Base
 
 class ChatLog(Base):
     __tablename__ = "chat_log_TB"
