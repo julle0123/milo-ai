@@ -4,6 +4,8 @@ from langchain.agents import create_openai_functions_agent, AgentExecutor
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_openai import ChatOpenAI
+from sqlalchemy.orm import Session
+from app.services.report_service import get_emotion_trend_text
 from app.services.emotion_service import analyze_emotion_gpt
 from app.services.rag_service import retrieve_similar_cases_for_rag
 from app.services.memory import get_session_history
@@ -30,9 +32,13 @@ def load_prompt_template(persona: str) -> str:
     with open(path, "r", encoding="utf-8") as f:
         return f.read()
 
-def chat_with_bot(user_input: str, session_id: str = "default", persona: str = "emotional") -> str:
+def chat_with_bot(user_input: str, session_id: str = "default", persona: str = "emotional", db: Session = None) -> str:
     system_text = load_prompt_template(persona)
     retrieved = retrieve_similar_cases_for_rag(user_input)
+
+    # ✅ 감정 흐름 삽입 (정상적으로 db 사용)
+    trend = get_emotion_trend_text(session_id, db=db)
+    system_text += f"\n\n[최근 감정 흐름 요약]\n{trend}"
 
     prompt = ChatPromptTemplate.from_messages([
         ("system", f"{{system_text}}\n\n[참고할 유사 상담사례]\n{{retrieved}}"),

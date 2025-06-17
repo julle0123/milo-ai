@@ -2,7 +2,9 @@
 from typing import List, Dict
 import json
 from app.core.client import llm
-
+from sqlalchemy.orm import Session
+from datetime import datetime, timedelta
+from app.models.daily_emotion_report import DailyEmotionReport
 # ----------------------
 # 문장 단위 감정 분류용 (6종)
 # ----------------------
@@ -51,11 +53,21 @@ def summarize_day_conversation(messages: List[str], user_id: str, date: str) -> 
 
 {combined_text}
 
+"summary"는 하루 요약된 내용을 작성되어야 해. 
+오늘 하루 어떤 감정만 느꼇다로 끝내면 안되고, 구체적인 내용이 반영되도록 해야 해.
+
+"feedback"은 말 그대로 피드백 해주면 되는데 예시 문장 처럼 너무 짧거나 그러면 안돼.
+
+"encouragement"는 오늘 "summary" 내용과 "feedback"을 바탕으로 응원의 말이나 사용자에게
+도움이 되는 말을 해줘.
+
+감정 벡터 점수가 똑같은 숫자로 나오지 안도록 해줘.
+
 다음 정보를 JSON 형식으로 정확하게 출력해줘 (key는 영문, 값은 소수점 둘째자리까지):
 
 예시:
 {{
-  "joy": 0.83,
+  "joy": 0.33,
   "sadness": 0.15,
   "anger": 0.10,
   "anxiety": 0.62,
@@ -97,3 +109,28 @@ def summarize_day_conversation(messages: List[str], user_id: str, date: str) -> 
     except Exception as e:
         print("GPT JSON 파싱 실패:", str(e))
         raise ValueError(f"GPT 응답 파싱 실패: {e}")
+    
+    
+
+def get_emotion_trend_text(user_id: str, db: Session) -> str:
+
+
+    today = datetime.now().date()
+    week_ago = today - timedelta(days=6)
+
+    reports = db.query(DailyEmotionReport).filter(
+        DailyEmotionReport.USER_ID == user_id,
+        DailyEmotionReport.DATE >= week_ago,
+        DailyEmotionReport.DATE <= today
+    ).order_by(DailyEmotionReport.DATE).all()
+
+    if not reports or len(reports) < 2:
+        return "최근 감정 변화 데이터가 부족합니다."
+
+    lines = []
+    for r in reports:
+        lines.append(
+            f"{r.DATE} → 기쁨:{r.JOY:.2f}, 슬픔:{r.SADNESS:.2f}, 불안:{r.ANXIETY:.2f}, 안정:{r.STABLE:.2f}"
+        )
+
+    return "\n".join(lines)

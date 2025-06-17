@@ -13,7 +13,7 @@ router = APIRouter()
 @router.post("/", response_model=ChatResponse)
 async def chat(req: ChatRequest, db: Session = Depends(get_db)):
     # 1. 챗봇 응답 생성
-    output_text = chat_with_bot(req.input, req.session_id, req.persona)
+    output_text = chat_with_bot(req.input, req.session_id, req.persona, db=db)
 
     # 2. 대화 로그 저장만 수행
     log = ChatLog(USER_ID=req.session_id, SENDER=req.input, RESPONDER=output_text)
