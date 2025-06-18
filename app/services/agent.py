@@ -5,8 +5,9 @@ from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_openai import ChatOpenAI
 from sqlalchemy.orm import Session
-from app.services.report_service import get_emotion_trend_text
+from app.services.emotion_service import get_emotion_trend_text
 from app.services.emotion_service import analyze_emotion_gpt
+from app.services.emotion_service import get_user_nickname
 from app.services.rag_service import retrieve_similar_cases_for_rag
 from app.services.memory import get_session_history
 from app.core.client import llm
@@ -36,7 +37,10 @@ def chat_with_bot(user_input: str, session_id: str = "default", persona: str = "
     system_text = load_prompt_template(persona)
     retrieved = retrieve_similar_cases_for_rag(user_input)
 
-    # ✅ 감정 흐름 삽입 (정상적으로 db 사용)
+    nickname = get_user_nickname(session_id, db=db)
+    system_text = system_text.replace("{nickname}", nickname)
+
+    # 감정 흐름 삽입 (정상적으로 db 사용)
     trend = get_emotion_trend_text(session_id, db=db)
     system_text += f"\n\n[최근 감정 흐름 요약]\n{trend}"
 

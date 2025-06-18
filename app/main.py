@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from app.api import chat, roleplay, log, chat_end  
 from app.models.base import Base            # 수정된 Base
 from app.core.db import engine              # DB 연결 유지
-from app.models import user, chat_log, daily_emotion_report  # 모델 import
+
 
 app = FastAPI(title="Milo 마음 돌봄 챗봇")
 
@@ -18,3 +18,4 @@ app.include_router(chat_end.router, prefix="/api", tags = ["report"])
 @app.get("/")
 def root():
     return {"message": "Milo 마음 돌봄 챗봇 API"}
+

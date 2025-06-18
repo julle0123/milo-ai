@@ -1,6 +1,7 @@
 # emotion_service.py
 from typing import List, Dict
 import json
+from app.models.user import User
 from app.core.client import llm
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
@@ -130,7 +131,12 @@ def get_emotion_trend_text(user_id: str, db: Session) -> str:
     lines = []
     for r in reports:
         lines.append(
-            f"{r.DATE} → 기쁨:{r.JOY:.2f}, 슬픔:{r.SADNESS:.2f}, 불안:{r.ANXIETY:.2f}, 안정:{r.STABLE:.2f}"
+            f"{r.DATE} → 기쁨:{r.JOY:.2f}, 슬픔:{r.SADNESS:.2f}, 불안:{r.ANXIETY:.2f}, 안정:{r.STABLE:.2f}, 분노:{r.ANGER:.2f}"
         )
 
     return "\n".join(lines)
+
+
+def get_user_nickname(user_id: str, db: Session) -> str:
+    user = db.query(User).filter(User.USER_ID == user_id).first()
+    return user.NICKNAME if user else "사용자님"
