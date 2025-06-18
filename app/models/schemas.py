@@ -1,24 +1,24 @@
 # app/models/schemas.py
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
+from typing import Optional
 
 class ChatRequest(BaseModel):
+    user_id: str
     input: str
-    session_id: str = "default"
+    session_id: Optional[str] = None
     persona: str = "emotional"
 
 class ChatResponse(BaseModel):
     output: str
 
-class ChatRoleplayRequest(BaseModel):
-    name: str
-    relation: str
-    personality: str
-    speech_style: str
-    situation: str
-    input: str
-    session_id: str = "default"
 
+class ChatRoleplayInput(BaseModel):
+    user_id: str
+    character_id: int
+    input: str
+    session_id: Optional[str] = None
+    
 class ChatLogCreate(BaseModel):
     USER_ID: str
     SENDER: str
