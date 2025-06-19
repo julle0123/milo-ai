@@ -28,6 +28,7 @@ def end_session(user_id: str, db: Session = Depends(get_db)):
             return {"status": "saved", "main_emotion": result["MAIN_EMOTION"]}
 
         except Exception as e:
-            return {"status": "error", "message": str(e)}
+            msg = f"{e}"  
+            return {"status": "error", "message": msg}
     else:
         return {"status": "no_messages"}

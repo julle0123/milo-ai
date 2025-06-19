@@ -29,3 +29,6 @@ class ChatLogResponse(ChatLogCreate):
     CREATED_AT: datetime
 
     model_config = ConfigDict(from_attributes=True)
+    
+class MonthlyReportRequest(BaseModel):
+    user_id: str

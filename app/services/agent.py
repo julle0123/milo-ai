@@ -19,11 +19,32 @@ from app.services.rag_service import retrieve_similar_cases_for_rag
 from langchain.tools import tool
 
 @tool
+def detect_crisis_and_respond(text: str) -> str:
+    """사용자 입력에서 위기 단어를 감지하고 응급 대응 메시지를 반환합니다."""
+    CRISIS_KEYWORDS = [
+        "자해", "죽고 싶", "사라지고 싶", "존재하고 싶지 않", 
+        "끝내고 싶", "무의미해", "견딜 수 없", "없어지고 싶", "더 이상 못 버티겠"
+        ]
+    if any(keyword in text for keyword in CRISIS_KEYWORDS):
+        return (
+            "[⚠️ 위기 감지]\n"
+            "지금 매우 힘든 상황일 수 있어요.\n"
+            "혹시 아래와 같은 기관에 도움을 요청해보는 건 어떨까요?\n\n"
+            "- 정신건강위기상담전화 1577-0199\n"
+            "- 자살예방센터 1393\n"
+            "- 청소년상담센터 1388\n\n"
+            "💬 당신의 마음은 소중하고, 이 순간도 지나갈 수 있어요.\n"
+            "함께 이겨낼 수 있도록 도와드릴게요."
+        )
+    else:
+        return "문제없음: 위기 단어는 감지되지 않았습니다."
+
+@tool
 def analyze_emotion_tool(user_input: str) -> str:
     """문장을 분석해 '[감정: OO] 문장' 형태로 반환."""
     return analyze_emotion_gpt(user_input)
 
-tools = [analyze_emotion_tool]
+tools = [analyze_emotion_tool, detect_crisis_and_respond]
 
 # ───── 프롬프트 템플릿 경로 ──────────────────────────────────────────────────
 PROMPT_PATH = {
@@ -44,7 +65,7 @@ def chat_with_bot(
         persona: str = "emotional",
         db: Optional[Session] = None
 ) -> str:
-
+ 
     # 1) 세션 ID 보장
     session_id = session_id or str(uuid.uuid4())
     print(f"▶️ [Agent] 세션 ID: {session_id}")
@@ -73,9 +94,9 @@ def chat_with_bot(
 
     memory_agent = RunnableWithMessageHistory(
         executor,
-        get_session_history,              # 세션별 히스토리 딕셔너리
+        lambda session_id: get_session_history(session_id, {"user_id": user_id, "db": db}),
         input_messages_key="input",
-        history_messages_key="history",
+        history_messages_key="history"
     )
 
     # 5) 실행

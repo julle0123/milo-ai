@@ -2,7 +2,7 @@ from sqlalchemy import Column, BigInteger, String, Date, Integer, Float, Text, D
 from app.models.base import Base
 
 class MonthlyEmotionReport(Base):
-    __tablename__ = "monthly_emotion_report_TB"
+    __tablename__ = "monthly_emotion_summary_TB"
 
     summary_id = Column(BigInteger, primary_key=True, autoincrement=True)
     user_id = Column(String(50), nullable=False)

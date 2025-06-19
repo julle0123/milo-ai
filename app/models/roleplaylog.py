@@ -1,8 +1,10 @@
+# app/models/role_play_log.py
+
 from sqlalchemy import Column, BigInteger, String, Text, DateTime, ForeignKey
 from sqlalchemy.sql import func
 from app.models.base import Base
 
-class role_play_log_TB(Base):
+class RolePlayLog(Base):  
     __tablename__ = "role_play_log_TB"
 
     ROLE_CHAT_ID = Column(BigInteger, primary_key=True, autoincrement=True)
