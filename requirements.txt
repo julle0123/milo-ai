@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+openai
+langchain
+langchain-openai
+langchain-community
+langchain-core
+qdrant-client
+pydantic-settings
+python-dotenv
+tiktoken
+pymysql
+sqlalchemy
