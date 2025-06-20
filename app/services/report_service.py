@@ -10,9 +10,12 @@ from app.core.config import settings
 from collections import defaultdict
 import json
 
+# GPT 호출 클라이언트 (OpenAI API)
 client = OpenAI(api_key=settings.openai_api_key)
 
 # 1. 하루 동안의 대화 메시지 추출
+# - sender, responder 모두 포함
+# - 날짜 기준으로 00:00 ~ 23:59까지 포함
 def get_day_conversations(user_id: str, date: str, db: Session) -> list[str]:
     date_start = datetime.strptime(date, "%Y-%m-%d")
     date_end = date_start + timedelta(days=1)  # 다음 날 00:00:00
@@ -25,7 +28,9 @@ def get_day_conversations(user_id: str, date: str, db: Session) -> list[str]:
 
     return [chat.SENDER for chat in chats] + [chat.RESPONDER for chat in chats]
 
-
+# 2. 하루 감정 분석 결과 저장 (daily_emotion_report_TB)
+# - 기존 데이터 있으면 UPDATE, 없으면 INSERT
+# - 저장 후, 해당 월 일별 리포트가 3개 이상이면 → 월간 리포트 자동 생성
 def save_or_update_daily_report(db: Session, user_id: str, date: str, result: dict):
 
     try:
@@ -49,6 +54,7 @@ def save_or_update_daily_report(db: Session, user_id: str, date: str, result: di
             db.add(report)
 
         db.commit()
+        
         # daily report 저장 후, 월간 리포트도 조건부 갱신
         year = date_obj.year
         month = date_obj.month
@@ -70,6 +76,9 @@ def save_or_update_daily_report(db: Session, user_id: str, date: str, result: di
         print("DB 저장 실패:", str(e))
         raise
     
+# 3. GPT 기반 월간 요약 문장 생성
+# - 감정 평균 점수 → 요약문 + 조언 생성
+# - 점수 자체는 출력하지 않도록 설정
 def gpt_generate_monthly_summary(avg_scores: dict, session_count: int, ym: str) -> str:
     prompt = f"""
     다음은 {ym} 한 달간 사용자의 감정 평균 점수입니다.
@@ -96,7 +105,10 @@ def gpt_generate_monthly_summary(avg_scores: dict, session_count: int, ym: str) 
     return res.choices[0].message.content.strip()
 
 
-
+# 4. 월간 리포트 생성 or 업데이트
+# - 한 달간 daily 리포트 ≥ 3개 이상일 경우 자동 실행
+# - 감정 평균 계산 + GPT 총평 생성
+# - monthly_emotion_summary_TB에 INSERT or UPDATE
 def generate_monthly_report_from_daily(db: Session, user_id: str, year: int, month: int):
     first_day = date(year, month, 1)
     next_month = date(year + int(month == 12), (month % 12) + 1, 1)
@@ -108,7 +120,7 @@ def generate_monthly_report_from_daily(db: Session, user_id: str, year: int, mon
     ).all()
 
     if len(daily_reports) < 3:
-        print(f"❌ {len(daily_reports)}건밖에 없어 월간 리포트 생략됨")
+        print(f"{len(daily_reports)}건밖에 없어 월간 리포트 생략됨")
         return None
 
     emotion_sum = defaultdict(float)

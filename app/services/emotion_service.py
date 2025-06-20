@@ -1,4 +1,4 @@
-# emotion_service.py
+# app/services/emotion_service.py
 from typing import List, Dict
 import json
 from app.models.user import User
@@ -6,12 +6,12 @@ from app.core.client import llm
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from app.models.daily_emotion_report import DailyEmotionReport
-# ----------------------
-# 문장 단위 감정 분류용 (6종)
-# ----------------------
 
+
+# 문장 단위 감정 분류용 (6종)
 EMOTION_CATEGORIES = ["기쁨", "불안", "분노", "슬픔", "상처", "당황"]
 
+# GPT 기반 감정 라벨링 + 원문 포함 문장 반환
 def analyze_emotion_gpt(user_input: str) -> str:
     prompt = (
         "다음 문장의 대표 감정을 반드시 아래 6개 중 하나로만 한글 한 단어로 출력해줘.\n"
@@ -23,6 +23,8 @@ def analyze_emotion_gpt(user_input: str) -> str:
         emotion = "불안"
     return f"[감정: {emotion}] {user_input}"
 
+
+# 감정 벡터 중 대표 감정을 5종(안정 포함) 기준으로 추출
 def extract_emotion_label(user_input: str) -> str:
     prompt = (
         "다음 문장의 대표 감정을 반드시 아래 6개 중 하나로만 한글 한 단어로 출력해줘.\n"
@@ -32,10 +34,9 @@ def extract_emotion_label(user_input: str) -> str:
     emotion = llm.invoke(prompt).content.strip()
     return emotion if emotion in EMOTION_CATEGORIES else "불안"
 
-# ----------------------
-# 하루치 감정 분석 리포트용 (6종 분석 → 대표 감정 5종 변환)
-# ----------------------
 
+# 일일 감정 분석용 - 감정 벡터 + 총평 + 피드백 + 응원말 생성
+# 감정 벡터 중 대표 감정을 5종(안정 포함) 기준으로 추출
 def convert_to_main_emotion(score_dict: Dict[str, float]) -> str:
     five_emotion_scores = {
         "기쁨": score_dict.get("joy", 0.0),
@@ -46,6 +47,7 @@ def convert_to_main_emotion(score_dict: Dict[str, float]) -> str:
     }
     return max(five_emotion_scores.items(), key=lambda x: x[1])[0]
 
+# 하루치 대화 리스트를 GPT에게 넘겨 감정 요약 및 점수 추출
 def summarize_day_conversation(messages: List[str], user_id: str, date: str) -> Dict:
     combined_text = "\n".join(messages)
 
@@ -87,6 +89,7 @@ def summarize_day_conversation(messages: List[str], user_id: str, date: str) -> 
     raw_output = response.content.strip()
     print("🧠 GPT 응답 원문:\n", raw_output)
 
+    # GPT 응답이 ```json 또는 ``` 으로 감싸져 있는 경우 제거
     if raw_output.startswith("```json"):
         raw_output = raw_output.lstrip("```json").rstrip("```").strip()
     elif raw_output.startswith("```"):
@@ -116,7 +119,8 @@ def summarize_day_conversation(messages: List[str], user_id: str, date: str) -> 
         raise ValueError(f"GPT 응답 파싱 실패: {e}")
     
     
-
+# 최근 감정 흐름 요약 텍스트 반환
+# - 주간 일일 리포트를 기반으로 감정 점수 변화 
 def get_emotion_trend_text(user_id: str, db: Session) -> str:
 
 
@@ -140,7 +144,8 @@ def get_emotion_trend_text(user_id: str, db: Session) -> str:
 
     return "\n".join(lines)
 
-
+# 사용자 닉네임 조회
+# - 닉네임이 없을 경우 기본값 "사용자님" 반환
 def get_user_nickname(user_id: str, db: Session) -> str:
     user = db.query(User).filter(User.USER_ID == user_id).first()
     return user.NICKNAME if user else "사용자님"
