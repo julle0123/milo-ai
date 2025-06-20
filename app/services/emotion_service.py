@@ -1,0 +1,151 @@
+# app/services/emotion_service.py
+from typing import List, Dict
+import json
+from app.models.user import User
+from app.core.client import llm
+from sqlalchemy.orm import Session
+from datetime import datetime, timedelta
+from app.models.daily_emotion_report import DailyEmotionReport
+
+
+# 문장 단위 감정 분류용 (6종)
+EMOTION_CATEGORIES = ["기쁨", "불안", "분노", "슬픔", "상처", "당황"]
+
+# GPT 기반 감정 라벨링 + 원문 포함 문장 반환
+def analyze_emotion_gpt(user_input: str) -> str:
+    prompt = (
+        "다음 문장의 대표 감정을 반드시 아래 6개 중 하나로만 한글 한 단어로 출력해줘.\n"
+        "기쁨, 불안, 분노, 슬픔, 상처, 당황 중 택1\n"
+        f"문장: {user_input}\n감정: "
+    )
+    emotion = llm.invoke(prompt).content.strip()
+    if emotion not in EMOTION_CATEGORIES:
+        emotion = "불안"
+    return f"[감정: {emotion}] {user_input}"
+
+
+# 감정 벡터 중 대표 감정을 5종(안정 포함) 기준으로 추출
+def extract_emotion_label(user_input: str) -> str:
+    prompt = (
+        "다음 문장의 대표 감정을 반드시 아래 6개 중 하나로만 한글 한 단어로 출력해줘.\n"
+        "기쁨, 불안, 분노, 슬픔, 상처, 당황 중 택1\n"
+        f"문장: {user_input}\n감정: "
+    )
+    emotion = llm.invoke(prompt).content.strip()
+    return emotion if emotion in EMOTION_CATEGORIES else "불안"
+
+
+# 일일 감정 분석용 - 감정 벡터 + 총평 + 피드백 + 응원말 생성
+# 감정 벡터 중 대표 감정을 5종(안정 포함) 기준으로 추출
+def convert_to_main_emotion(score_dict: Dict[str, float]) -> str:
+    five_emotion_scores = {
+        "기쁨": score_dict.get("joy", 0.0),
+        "슬픔": score_dict.get("sadness", 0.0),
+        "분노": score_dict.get("anger", 0.0),
+        "불안": score_dict.get("anxiety", 0.0),
+        "안정": score_dict.get("stable", 0.0),
+    }
+    return max(five_emotion_scores.items(), key=lambda x: x[1])[0]
+
+# 하루치 대화 리스트를 GPT에게 넘겨 감정 요약 및 점수 추출
+def summarize_day_conversation(messages: List[str], user_id: str, date: str) -> Dict:
+    combined_text = "\n".join(messages)
+
+    prompt = f"""
+너는 감정 분석 전문가야. 아래는 사용자의 하루치 대화 내용이야:
+
+{combined_text}
+
+[지침 사항]
+"summary"는 하루 요약된 내용을 작성되어야 해. 
+오늘 하루 어떤 감정만 느꼇다로 끝내면 안되고, 구체적인 내용이 반영되도록 해야 해.
+문장 길이는 짧으면 안돼. 사용자가 하루의 자신의 감정을 보기 위함이기 때문에
+요약된 내용이라 할지라도 전체적인 내용이 잘 반영되어 있어야해.
+
+"feedback"은 말 그대로 피드백 해주면 되는데 예시 문장 처럼 너무 짧거나 그러면 안돼.
+사용자에게 진심으로 도움이 될만한 피드백을 해줘야 해. 
+
+"encouragement"는 오늘 "summary" 내용과 "feedback"을 바탕으로 응원의 말이나 사용자에게
+도움이 되는 말을 해줘. 최대 3~4문장으로 끝내도록 해줘 내용이 짧으면 1~2문장으로 끝내도 좋아.
+
+감정 벡터 점수가 똑같은 숫자로 나오지 안도록 해줘.
+
+다음 정보를 JSON 형식으로 정확하게 출력해줘 (key는 영문, 값은 소수점 둘째자리까지):
+
+예시:
+{{
+  "joy": 0.33,
+  "sadness": 0.15,
+  "anger": 0.10,
+  "anxiety": 0.62,
+  "stable": 0.33,
+  "summary": "하루 동안 불안이 많이 느껴졌고, 직업에 대한 걱정이 컸습니다.",
+  "feedback": "불안할 땐 호흡을 가다듬고 잠시 산책을 해보세요.",
+  "encouragement": "오늘도 잘 버텨주셔서 고마워요."
+}}
+"""
+
+    response = llm.invoke(prompt)
+    raw_output = response.content.strip()
+    print("🧠 GPT 응답 원문:\n", raw_output)
+
+    # GPT 응답이 ```json 또는 ``` 으로 감싸져 있는 경우 제거
+    if raw_output.startswith("```json"):
+        raw_output = raw_output.lstrip("```json").rstrip("```").strip()
+    elif raw_output.startswith("```"):
+        raw_output = raw_output.lstrip("```").rstrip("```").strip()
+
+    try:
+        parsed = json.loads(raw_output)
+
+        main_emotion = convert_to_main_emotion(parsed)
+
+        return {
+            "USER_ID": user_id,
+            "DATE": date,
+            "MAIN_EMOTION": main_emotion,
+            "SCORE": max(parsed["joy"], parsed["sadness"], parsed["anger"], parsed["anxiety"]),
+            "STABLE": parsed["stable"],
+            "JOY": parsed["joy"],
+            "SADNESS": parsed["sadness"],
+            "ANGER": parsed["anger"],
+            "ANXIETY": parsed["anxiety"],
+            "SUMMARY": parsed["summary"],
+            "FEEDBACK": parsed["feedback"],
+            "ENCOURAGEMENT": parsed["encouragement"]
+        }
+    except Exception as e:
+        print("GPT JSON 파싱 실패:", str(e))
+        raise ValueError(f"GPT 응답 파싱 실패: {e}")
+    
+    
+# 최근 감정 흐름 요약 텍스트 반환
+# - 주간 일일 리포트를 기반으로 감정 점수 변화 
+def get_emotion_trend_text(user_id: str, db: Session) -> str:
+
+
+    today = datetime.now().date()
+    week_ago = today - timedelta(days=6)
+
+    reports = db.query(DailyEmotionReport).filter(
+        DailyEmotionReport.USER_ID == user_id,
+        DailyEmotionReport.DATE >= week_ago,
+        DailyEmotionReport.DATE <= today
+    ).order_by(DailyEmotionReport.DATE).all()
+
+    if not reports or len(reports) < 2:
+        return "최근 감정 변화 데이터가 부족합니다."
+
+    lines = []
+    for r in reports:
+        lines.append(
+            f"{r.DATE} → 기쁨:{r.JOY:.2f}, 슬픔:{r.SADNESS:.2f}, 불안:{r.ANXIETY:.2f}, 안정:{r.STABLE:.2f}, 분노:{r.ANGER:.2f}"
+        )
+
+    return "\n".join(lines)
+
+# 사용자 닉네임 조회
+# - 닉네임이 없을 경우 기본값 "사용자님" 반환
+def get_user_nickname(user_id: str, db: Session) -> str:
+    user = db.query(User).filter(User.USER_ID == user_id).first()
+    return user.NICKNAME if user else "사용자님"
