@@ -2,15 +2,16 @@
 
 FROM python:3.10-slim
 
-# 작업 디렉토리 설정
+# 1. 작업 디렉토리 설정
 WORKDIR /app
 
-# requirements.txt와 프로젝트 파일 복사
+# 2. requirements 설치
 COPY requirements.txt ./
 RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+# 3. 전체 코드 및 .env 복사
+COPY . .    
+# .env 포함
 
-# FastAPI 실행
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
-
+# 4. FastAPI 실행
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

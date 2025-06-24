@@ -1,0 +1,69 @@
+name: Auto Build and Deploy to NCP
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+
+      - name: Create .env file from secrets
+        run: |
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
+          echo "QDRANT_URL=${{ secrets.QDRANT_URL }}" >> .env
+          echo "QDRANT_API_KEY=${{ secrets.QDRANT_API_KEY }}" >> .env
+          echo "COLLECTION_NAME=${{ secrets.COLLECTION_NAME }}" >> .env
+          echo "LANGSMITH_TRACING=true" >> .env
+          echo "LANGSMITH_ENDPOINT=${{ secrets.LANGSMITH_ENDPOINT }}" >> .env
+          echo "LANGSMITH_API_KEY=${{ secrets.LANGSMITH_API_KEY }}" >> .env
+          echo "LANGSMITH_PROJECT=${{ secrets.LANGSMITH_PROJECT }}" >> .env
+          echo "MYSQL_HOST=${{ secrets.MYSQL_HOST }}" >> .env
+          echo "MYSQL_PORT=${{ secrets.MYSQL_PORT }}" >> .env
+          echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> .env
+          echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
+          echo "MYSQL_DB=${{ secrets.MYSQL_DB }}" >> .env
+
+      - name: Build Docker image
+        run: docker build -t milo-fastapi .
+
+      - name: Tag Docker image
+        run: docker tag milo-fastapi milo-registry.kr.ncr.ntruss.com/milo-fastapi:latest
+
+      - name: Login to NCP Registry
+        run: echo "${{ secrets.NCP_SECRET }}" | docker login milo-registry.kr.ncr.ntruss.com -u ${{ secrets.NCP_ACCESS }} --password-stdin
+
+      - name: Push Docker image
+        run: docker push milo-registry.kr.ncr.ntruss.com/milo-fastapi:latest
+
+      - name: SSH to NCP VM and deploy container
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.NCP_VM_HOST }}
+          username: ${{ secrets.NCP_VM_USER }}
+          key: ${{ secrets.NCP_VM_SSH_KEY }}
+          script: |
+            cd ~/milo-ai || git clone https://github.com/julle0123/milo-ai.git
+            cd ~/milo-ai
+            echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > .env
+            echo "QDRANT_URL=${{ secrets.QDRANT_URL }}" >> .env
+            echo "QDRANT_API_KEY=${{ secrets.QDRANT_API_KEY }}" >> .env
+            echo "COLLECTION_NAME=${{ secrets.COLLECTION_NAME }}" >> .env
+            echo "LANGSMITH_TRACING=true" >> .env
+            echo "LANGSMITH_ENDPOINT=${{ secrets.LANGSMITH_ENDPOINT }}" >> .env
+            echo "LANGSMITH_API_KEY=${{ secrets.LANGSMITH_API_KEY }}" >> .env
+            echo "LANGSMITH_PROJECT=${{ secrets.LANGSMITH_PROJECT }}" >> .env
+            echo "MYSQL_HOST=${{ secrets.MYSQL_HOST }}" >> .env
+            echo "MYSQL_PORT=${{ secrets.MYSQL_PORT }}" >> .env
+            echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> .env
+            echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
+            echo "MYSQL_DB=${{ secrets.MYSQL_DB }}" >> .env
+            docker stop milo || true
+            docker rm milo || true
+            docker login milo-registry.kr.ncr.ntruss.com -u ${{ secrets.NCP_ACCESS }} -p ${{ secrets.NCP_SECRET }}
+            docker pull milo-registry.kr.ncr.ntruss.com/milo-fastapi:latest
+            docker run -d -p 8000:8000 --env-file .env --name milo milo-registry.kr.ncr.ntruss.com/milo-fastapi:latest
