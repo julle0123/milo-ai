@@ -21,7 +21,7 @@ llm = ChatOpenAI(
     temperature=0.1,
     openai_api_key=settings.openai_api_key  # 이 부분!
 )
-
+  
 # 임베딩 모델 (문장 → 벡터 변환)
 embedding = OpenAIEmbeddings(model="text-embedding-3-small")
 

@@ -18,18 +18,16 @@ router = APIRouter()
 # 사용자는 하루 대화를 종료하고, 시스템은 그 시점의 감정을 기록
 @router.post("/", response_model=ChatResponse)
 async def chat(req: ChatRequest, db: Session = Depends(get_db)):
-    # 1. 챗봇 응답 생성
     output_text = chat_with_bot(
-    user_input=req.input,
-    session_id=req.session_id,   # None 이면 내부에서 uuid 생성
-    user_id=req.user_id,
-    persona=req.persona,
-    db=db
-)
+        user_input=req.input,
+        session_id=req.user_id,
+        user_id=req.user_id,
+        persona=req.persona,
+        db=db,
+        force_summary=req.force_summary,
+    )
 
-    # 2. 대화 로그 저장만 수행
-    log = ChatLog(USER_ID=req.user_id, SENDER=req.input, RESPONDER=output_text)
-    db.add(log)
+    db.add(ChatLog(USER_ID=req.user_id, SENDER=req.input, RESPONDER=output_text))
     db.commit()
 
     return ChatResponse(output=output_text)

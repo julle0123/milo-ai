@@ -3,18 +3,44 @@ from typing import Optional
 from langchain.agents import create_openai_functions_agent, AgentExecutor
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_openai import ChatOpenAI
 from sqlalchemy.orm import Session
+from langchain.tools import tool
 
 from app.core.client import llm # GPT 모델 인스턴스
-from app.services.memory import get_session_history # 세션 기반 히스토리 관리 함수
+from app.services.memory import get_user_history # ✅ user_id 기반 히스토리 관리 함수로 변경
 from app.services.emotion_service import (
     get_emotion_trend_text,      # 최근 감정 흐름 요약 (DB 기반)
     analyze_emotion_gpt,         # 감정 분석 도구 (GPT 기반)
     get_user_nickname            # 사용자 닉네임 조회
 )
 from app.services.rag_service import retrieve_similar_cases_for_rag  # 유사 사례 검색 (RAG)
-from langchain.tools import tool
+from app.models.chat_log import ChatLog
+
+
+# 요약용 전체 대화 문자열 구성
+def summarize_full_chat_history(user_id: str, db: Session) -> str:
+    logs = (
+        db.query(ChatLog)
+        .filter(ChatLog.USER_ID == user_id)
+        .order_by(ChatLog.CREATED_AT.asc())
+        .all()
+    )
+    if not logs:
+        return "이전에 나눈 대화 내용이 없습니다."
+
+    # 발화자 명시해서 프롬프트 형태로 구성
+    full_text = "\n".join(
+        f"사용자: {log.SENDER}\n챗봇: {log.RESPONDER}" for log in logs
+    )
+
+    summary_prompt = (
+        "다음은 사용자와 챗봇 사이의 대화 기록입니다. 이 대화를 2~3문단으로 요약해 주세요. "
+        "대화의 감정 흐름과 사용자의 고민/상태가 드러나도록 해 주세요.\n\n"
+        + full_text
+    )
+
+    result = llm.invoke(summary_prompt)
+    return result.content if hasattr(result, "content") else str(result)
 
 # LangChain tool 등록 
 # 사용자 입력을 "[감정: OO] 문장" 형식으로 변환하는 GPT 기반 분석 도구
@@ -52,45 +78,50 @@ def load_prompt_template(persona: str) -> str:
 # 출력:
 #   - GPT 기반 감정 상담 응답 문자열
 def chat_with_bot(
-        user_input: str,
-        session_id: Optional[str] = None,      # None이면 uuid로 생성
-        user_id: Optional[str] = None,         # 실제 사용자 ID
-        persona: str = "emotional",
-        db: Optional[Session] = None
+    user_input: str,
+    session_id: Optional[str] = None,
+    user_id: Optional[str] = None,
+    persona: str = "emotional",
+    db: Optional[Session] = None,
+    force_summary: bool = False,
 ) -> str:
- 
-    # 1) 세션 ID 생성 또는 유지
-    session_id = session_id or str(uuid.uuid4())
-    print(f"▶️ [Agent] 세션 ID: {session_id}")
+    # 1) ‘세션 ID’를 강제로 user_id 로 지정
+    session_id = user_id or session_id or str(uuid.uuid4())
+    print(f"▶️ [Agent] session_id(user_id): {session_id}")
 
     # 2) 프롬프트 시스템 메시지 구성 (닉네임, 감정 트렌드 삽입)
     system_text = load_prompt_template(persona)
-    nickname = get_user_nickname(user_id, db=db)            
-    trend    = get_emotion_trend_text(user_id, db=db)       
+    nickname = get_user_nickname(user_id, db=db)
+    trend = get_emotion_trend_text(user_id, db=db)
     retrieved = retrieve_similar_cases_for_rag(user_input)
-
+    full_summary = summarize_full_chat_history(user_id, db)
+    
     system_text = system_text.replace("{nickname}", nickname)
-    system_text += f"\n\n[최근 감정 흐름 요약]\n{trend}"
-
+    system_text += (
+        "\n\n[최근 감정 흐름 요약]\n" + trend +
+        "\n\n[전체 감정 요약]\n" + full_summary +
+        "\n\n[규칙] 위 두 요약을 반드시 참고하여 사용자의 상태를 이해하고 대화에 반영하세요."
+    )
     # 3) 프롬프트 구성
     prompt = ChatPromptTemplate.from_messages([
-        ("system", "{system_text}\n\n[참고할 유사 상담사례]\n{retrieved}"),
+        ("system", "{system_text}"),
         MessagesPlaceholder("history"),
+        ("system", "[참고할 유사 상담사례]\n{retrieved}"),
         ("human", "{input}"),
-        MessagesPlaceholder("agent_scratchpad"),
+        MessagesPlaceholder("agent_scratchpad")
     ])
 
     # 4) LangChain Agent 준비
     agent    = create_openai_functions_agent(llm, tools, prompt)
     executor = AgentExecutor(agent=agent, tools=tools,
                              handle_parsing_errors=True, max_iterations=5)
-
+        
     # 5) 메모리 래핑 (RunnableWithMessageHistory 사용)
     memory_agent = RunnableWithMessageHistory(
         executor,
-        lambda session_id: get_session_history(session_id, {"user_id": user_id, "db": db}),
+        lambda sid: get_user_history(sid, db),
         input_messages_key="input",
-        history_messages_key="history"
+        history_messages_key="history",
     )
 
     # 6) 실행 및 예외 처리
