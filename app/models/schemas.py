@@ -9,7 +9,8 @@ class ChatRequest(BaseModel):
     input: str                   # 사용자 입력 문장
     session_id: Optional[str] = None  # 세션 ID (없으면 서버에서 생성)
     persona: str = "emotional"        # 프롬프트 타입 (emotional 또는 practical)
-
+    force_summary: Optional[bool] = False  # 요약 강제 여부 (기본값: False)
+    
 # 챗봇 대화 응답 스키마
 class ChatResponse(BaseModel):
     output: str                  # 챗봇 응답 문장
