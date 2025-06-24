@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from langchain.tools import tool
 
 from app.core.client import llm # GPT 모델 인스턴스
-from app.services.memory import get_user_history # ✅ user_id 기반 히스토리 관리 함수로 변경
+from app.services.memory import get_user_history # user_id 기반 히스토리 관리 함수로 변경
 from app.services.emotion_service import (
     get_emotion_trend_text,      # 최근 감정 흐름 요약 (DB 기반)
     analyze_emotion_gpt,         # 감정 분석 도구 (GPT 기반)
