@@ -48,43 +48,35 @@ jobs:
           key: ${{ secrets.NCP_VM_SSH_KEY }}
           script: |
             echo "프로젝트 디렉토리 이동/복제"
-            cd ~/milo-ai || git clone https://github.com/julle0123/milo-ai.git
-            cd ~/milo-ai
+              cd ~/milo-ai || git clone https://github.com/julle0123/milo-ai.git
+              cd ~/milo-ai
 
-            echo ".env 파일 구성"
-            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
-            QDRANT_URL=${{ secrets.QDRANT_URL }}
-            QDRANT_API_KEY=${{ secrets.QDRANT_API_KEY }}
-            COLLECTION_NAME=${{ secrets.COLLECTION_NAME }}
-            LANGSMITH_TRACING=true
-            LANGSMITH_ENDPOINT=${{ secrets.LANGSMITH_ENDPOINT }}
-            LANGSMITH_API_KEY=${{ secrets.LANGSMITH_API_KEY }}
-            LANGSMITH_PROJECT=${{ secrets.LANGSMITH_PROJECT }}
-            MYSQL_HOST=${{ secrets.MYSQL_HOST }}
-            MYSQL_PORT=${{ secrets.MYSQL_PORT }}
-            MYSQL_USER=${{ secrets.MYSQL_USER }}
-            MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
-            MYSQL_DB=${{ secrets.MYSQL_DB }}
-            EOF
+              echo ".env 파일 구성"
+              echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > .env
+              echo "QDRANT_URL=${{ secrets.QDRANT_URL }}" >> .env
+              echo "QDRANT_API_KEY=${{ secrets.QDRANT_API_KEY }}" >> .env
+              echo "COLLECTION_NAME=${{ secrets.COLLECTION_NAME }}" >> .env
+              echo "LANGSMITH_TRACING=true" >> .env
+              echo "LANGSMITH_ENDPOINT=${{ secrets.LANGSMITH_ENDPOINT }}" >> .env
+              echo "LANGSMITH_API_KEY=${{ secrets.LANGSMITH_API_KEY }}" >> .env
+              echo "LANGSMITH_PROJECT=${{ secrets.LANGSMITH_PROJECT }}" >> .env
+              echo "MYSQL_HOST=${{ secrets.MYSQL_HOST }}" >> .env
+              echo "MYSQL_PORT=${{ secrets.MYSQL_PORT }}" >> .env
+              echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> .env
+              echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
+              echo "MYSQL_DB=${{ secrets.MYSQL_DB }}" >> .env
 
-            echo "8000번 포트를 점유한 컨테이너 확인 및 제거"
-            PORT_CONTAINER=$(docker ps --format '{{.ID}} {{.Ports}}' | grep '0.0.0.0:8000' | awk '{print $1}')
-            if [ -n "$PORT_CONTAINER" ]; then
-              echo "🔧 컨테이너 $PORT_CONTAINER 가 포트 8000 사용 중 → 종료"
-              docker rm -f $PORT_CONTAINER
-              sleep 3
-            else
-              echo "8000 포트를 사용하는 컨테이너 없음"
-            fi
+              echo "컨테이너 이름이 milo인 경우 강제 종료 및 삭제"
+              docker rm -f milo || echo "milo 컨테이너가 없거나 이미 종료됨"
 
-            echo "최신 이미지 Pull"
-            docker login milo-registry.kr.ncr.ntruss.com -u ${{ secrets.NCP_ACCESS }} -p ${{ secrets.NCP_SECRET }}
-            docker pull milo-registry.kr.ncr.ntruss.com/milo-fastapi:latest
+              echo "최신 이미지 Pull"
+              docker login milo-registry.kr.ncr.ntruss.com -u ${{ secrets.NCP_ACCESS }} -p ${{ secrets.NCP_SECRET }}
+              docker pull milo-registry.kr.ncr.ntruss.com/milo-fastapi:latest
 
-            echo "새 milo 컨테이너 실행"
-            docker run -d \
-              -p 8000:8000 \
-              --env-file .env \
-              --restart always \
-              --name milo \
-              milo-registry.kr.ncr.ntruss.com/milo-fastapi:latest
+              echo "새 milo 컨테이너 실행"
+              docker run -d \
+                -p 8000:8000 \
+                --env-file .env \
+                --restart always \
+                --name milo \
+                milo-registry.kr.ncr.ntruss.com/milo-fastapi:latest
