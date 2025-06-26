@@ -62,8 +62,11 @@ jobs:
             echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> .env
             echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
             echo "MYSQL_DB=${{ secrets.MYSQL_DB }}" >> .env
-            docker stop milo || true
-            docker rm milo || true
+
+            # 안전한 방식으로 기존 컨테이너 제거
+            docker ps -q --filter "name=milo" | grep -q . && docker stop milo && docker rm milo || echo "No running milo container"
+
+            # 최신 이미지 pull 후 새 컨테이너 실행
             docker login milo-registry.kr.ncr.ntruss.com -u ${{ secrets.NCP_ACCESS }} -p ${{ secrets.NCP_SECRET }}
             docker pull milo-registry.kr.ncr.ntruss.com/milo-fastapi:latest
-            docker run -d -p 8000:8000 --env-file .env --name milo milo-registry.kr.ncr.ntruss.com/milo-fastapi:latest
+            docker run -d -p 8000:8000 --env-file ~/milo-ai/.env --restart always --name milo milo-registry.kr.ncr.ntruss.com/milo-fastapi:latest
