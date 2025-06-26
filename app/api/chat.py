@@ -42,23 +42,36 @@ def chat_initial_greeting(user_id: str, db: Session = Depends(get_db)):
      # 2. 최근 감정 흐름 요약 텍스트 생성
     trend = get_emotion_trend_text(user_id, db)
 
-     # 3. 어제 날짜 기준 감정 리포트 조회
-    yesterday = datetime.now().date() - timedelta(days=1)
-    report = db.query(DailyEmotionReport).filter(
+    # 3. 오늘, 어제 날짜 계산
+    today = datetime.now().date()
+    yesterday = today - timedelta(days=1)
+
+    # 4. 오늘/어제 감정 리포트 조회
+    today_report = db.query(DailyEmotionReport).filter(
+        DailyEmotionReport.USER_ID == user_id,
+        DailyEmotionReport.DATE == today
+    ).first()
+
+    yesterday_report = db.query(DailyEmotionReport).filter(
         DailyEmotionReport.USER_ID == user_id,
         DailyEmotionReport.DATE == yesterday
     ).first()
 
-    # 4. 리포트 존재 여부에 따라 인삿말 다르게 구성
-    if report:
+    # 5. 조건에 따른 인삿말 분기
+    if today_report:
         message = (
-            f"{nickname}님, 어제는 '{report.MAIN_EMOTION}' 감정이 드셨던 것 같아요. "
+            f"{nickname}님, 방금 전까지 '{today_report.MAIN_EMOTION}' 감정을 느끼신 것 같아요. "
+            f"대화를 이어가 볼까요?"
+        )
+    elif yesterday_report:
+        message = (
+            f"{nickname}님, 어제는 '{yesterday_report.MAIN_EMOTION}' 감정이 드셨던 것 같아요. "
             f"오늘은 어떤 기분이신가요?"
         )
     else:
         message = f"{nickname}님, 처음 만났네요. 편하게 이야기 나눠보면 좋겠어요."
 
-    # 5. 감정 흐름 요약 추가
+    # 6. 감정 흐름 요약 추가
     message += f"\n\n[최근 감정 흐름 요약]\n{trend}"
 
     return ChatResponse(output=message)
