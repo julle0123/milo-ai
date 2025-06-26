@@ -2,6 +2,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
+import pytz
 
 from app.models.schemas import ChatRequest, ChatResponse
 from app.services.agent import chat_with_bot
@@ -36,14 +37,16 @@ async def chat(req: ChatRequest, db: Session = Depends(get_db)):
 # 첫 진입 시 사용자에게 인사말 + 감정 흐름 요약 제공
 @router.get("/init", response_model=ChatResponse)
 def chat_initial_greeting(user_id: str, db: Session = Depends(get_db)):
-     # 1. 사용자 닉네임 조회
+    # 1. 사용자 닉네임 조회
     nickname = get_user_nickname(user_id, db)
-    
-     # 2. 최근 감정 흐름 요약 텍스트 생성
+
+    # 2. 최근 감정 흐름 요약 텍스트 생성
     trend = get_emotion_trend_text(user_id, db)
 
-    # 3. 오늘, 어제 날짜 계산
-    today = datetime.now().date()
+    # 3. 한국(KST) 기준 오늘/어제 날짜 계산
+    korea = pytz.timezone("Asia/Seoul")
+    now_kst = datetime.now(korea)
+    today = now_kst.date()
     yesterday = today - timedelta(days=1)
 
     # 4. 오늘/어제 감정 리포트 조회
@@ -58,12 +61,12 @@ def chat_initial_greeting(user_id: str, db: Session = Depends(get_db)):
     ).first()
 
     # 5. 조건에 따른 인삿말 분기
-    if today_report:
+    if today_report is not None:
         message = (
             f"{nickname}님, 방금 전까지 '{today_report.MAIN_EMOTION}' 감정을 느끼신 것 같아요. "
             f"대화를 이어가 볼까요?"
         )
-    elif yesterday_report:
+    elif yesterday_report is not None:
         message = (
             f"{nickname}님, 어제는 '{yesterday_report.MAIN_EMOTION}' 감정이 드셨던 것 같아요. "
             f"오늘은 어떤 기분이신가요?"
