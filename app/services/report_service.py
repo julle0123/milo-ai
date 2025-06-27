@@ -60,9 +60,9 @@ def save_or_update_daily_report(db: Session, user_id: str, date: str, result: di
             for key, value in result_to_save.items():
                 try:
                     setattr(existing, key, value)
-                    print(f"🔄 필드 '{key}' 덮어쓰기 완료")
+                    print(f"필드 '{key}' 덮어쓰기 완료")
                 except Exception as e:
-                    print(f"⚠️ 필드 '{key}' 설정 중 오류 발생: {e}")
+                    print(f"필드 '{key}' 설정 중 오류 발생: {e}")
         else:
             print("리포트 없음 → INSERT 시도")
             report = DailyEmotionReport(**result_to_save)
@@ -72,10 +72,10 @@ def save_or_update_daily_report(db: Session, user_id: str, date: str, result: di
 
         if not existing:
             db.refresh(report)
-            print("✅ INSERT 완료 후 MAIN_EMOTION:", report.MAIN_EMOTION)
+            print("INSERT 완료 후 MAIN_EMOTION:", report.MAIN_EMOTION)
         else:
             db.refresh(existing)
-            print("✅ UPDATE 완료 후 MAIN_EMOTION:", existing.MAIN_EMOTION)
+            print("UPDATE 완료 후 MAIN_EMOTION:", existing.MAIN_EMOTION)
 
         year = date_obj.year
         month = date_obj.month

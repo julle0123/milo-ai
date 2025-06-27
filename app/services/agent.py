@@ -109,10 +109,9 @@ def chat_with_bot(
         "\n\n[최근 감정 흐름 요약]\n" + trend +
         "\n\n[전체 감정 요약]\n" + full_summary +
         "\n\n[규칙] 위 두 요약을 반드시 참고하여 사용자의 상태를 이해하고 대화에 반영하세요." +
-        "\n\n[참고용 회복 콘텐츠 목록 (필수 아님)]\n" + recovery_candidates +
-        "\n\n※ 위 회복 콘텐츠는 반드시 사용할 필요는 없습니다. "
-        "GPT가 보기에 사용자가 정서적 회복이 필요하다고 느껴진다면, 자연스럽게 대화에 녹여서 추천해 주세요. "
-        "그렇지 않으면 무시하셔도 됩니다."
+        "\n\n[회복 콘텐츠 목록 (필수 아님)]\n" + recovery_candidates +
+        "\n\n※ GPT가 보기에 사용자가 정서적 회복이 필요하다고 느껴진다면, 자연스럽게 대화에 녹여서 추천해 주세요. "
+        "사용자가 추천해 달라고 할 시에는 무조건 제공해야 합니다."
     )
     # 3) 프롬프트 구성
     prompt = ChatPromptTemplate.from_messages([
@@ -124,7 +123,7 @@ def chat_with_bot(
     ])
 
     # 4) LangChain Agent 준비
-    agent = create_openai_tools_agent(llm, tools, prompt)
+    agent = create_openai_functions_agent(llm, tools, prompt)
     executor = AgentExecutor(agent=agent, tools=tools,
                              handle_parsing_errors=True, max_iterations=5)
         
