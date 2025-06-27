@@ -1,5 +1,6 @@
 # app/core/config.py
 from pydantic_settings import BaseSettings
+from pydantic import Field
 
 # .env 파일 기반 설정 클래스
 class Settings(BaseSettings):
@@ -10,7 +11,9 @@ class Settings(BaseSettings):
     qdrant_url: str
     qdrant_api_key: str
     collection_name: str = "chatbot_embeddings"
-
+    collection_nameu : str = "emotion_recovery_rag"
+    emotion_recovery_collection: str = Field("emotion_recovery_rag", alias="COLLECTION_NAMEU")
+     
     # LangSmith 설정
     langsmith_tracing: bool = False
     langsmith_api_key: str | None = None

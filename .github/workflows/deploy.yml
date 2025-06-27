@@ -18,6 +18,7 @@ jobs:
           echo "QDRANT_URL=${{ secrets.QDRANT_URL }}" >> .env
           echo "QDRANT_API_KEY=${{ secrets.QDRANT_API_KEY }}" >> .env
           echo "COLLECTION_NAME=${{ secrets.COLLECTION_NAME }}" >> .env
+          echo "COLLECTION_NAMEU=${{ secrets.COLLECTION_NAMEU }}" >> .env
           echo "LANGSMITH_TRACING=true" >> .env
           echo "LANGSMITH_ENDPOINT=${{ secrets.LANGSMITH_ENDPOINT }}" >> .env
           echo "LANGSMITH_API_KEY=${{ secrets.LANGSMITH_API_KEY }}" >> .env
@@ -56,6 +57,7 @@ jobs:
               echo "QDRANT_URL=${{ secrets.QDRANT_URL }}" >> .env
               echo "QDRANT_API_KEY=${{ secrets.QDRANT_API_KEY }}" >> .env
               echo "COLLECTION_NAME=${{ secrets.COLLECTION_NAME }}" >> .env
+              echo "COLLECTION_NAMEU=${{ secrets.COLLECTION_NAMEU }}" >> .env
               echo "LANGSMITH_TRACING=true" >> .env
               echo "LANGSMITH_ENDPOINT=${{ secrets.LANGSMITH_ENDPOINT }}" >> .env
               echo "LANGSMITH_API_KEY=${{ secrets.LANGSMITH_API_KEY }}" >> .env

@@ -1,6 +1,9 @@
 # app/services/rag_service.py
+import os
 from app.core.client import vectorstore
 from app.services.emotion_service import analyze_emotion_gpt
+from openai import OpenAI
+from qdrant_client import QdrantClient
 
 # 유사 사례 검색 함수 (RAG)
 # - 사용자 입력 문장을 감정 분석한 뒤, 해당 감정이 포함된 문장 전체를
@@ -27,3 +30,31 @@ def retrieve_similar_cases_for_rag(user_input: str, k: int = 3) -> str:
         results.append(f"[{emotion}] {answer}")
         
     return "\n".join(results)
+
+def retrieve_emotion_recovery_contents(user_input: str, top_k: int = 3) -> str:
+    """
+    사용자의 입력을 OpenAI 임베딩 후, 감정 회복 콘텐츠에서 유사한 콘텐츠를 검색함.
+    """
+    openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    qdrant = QdrantClient(
+    url=os.getenv("QDRANT_URL"),
+    api_key=os.getenv("QDRANT_API_KEY")
+    )
+    embedding = openai_client.embeddings.create(
+        model="text-embedding-3-small",
+        input=user_input
+    ).data[0].embedding
+
+    results = qdrant.search(
+        collection_name="emotion_recovery_rag",
+        query_vector=embedding,
+        limit=top_k,
+        with_payload=True
+    )
+
+    output = ""
+    for i, hit in enumerate(results, 1):
+        payload = hit.payload
+        output += f"{i}. {payload['youtube_url']}\n{payload['page_content']}\n\n"
+
+    return output.strip() or "유사한 콘텐츠를 찾을 수 없습니다."

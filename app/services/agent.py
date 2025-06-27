@@ -1,8 +1,9 @@
 import uuid
 from typing import Optional          
-from langchain.agents import create_openai_functions_agent, AgentExecutor
+from langchain.agents import create_openai_functions_agent, create_openai_tools_agent, AgentExecutor
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_openai import ChatOpenAI
 from sqlalchemy.orm import Session
 from langchain.tools import tool
 
@@ -14,6 +15,7 @@ from app.services.emotion_service import (
     get_user_nickname            # 사용자 닉네임 조회
 )
 from app.services.rag_service import retrieve_similar_cases_for_rag  # 유사 사례 검색 (RAG)
+from app.services.rag_service import retrieve_emotion_recovery_contents # 회복 콘텐츠
 from app.models.chat_log import ChatLog
 
 
@@ -96,11 +98,21 @@ def chat_with_bot(
     retrieved = retrieve_similar_cases_for_rag(user_input)
     full_summary = summarize_full_chat_history(user_id, db)
     
+    # 상담 유사사례는 항상 사용
+    retrieved = retrieve_similar_cases_for_rag(user_input)
+
+    # 회복 콘텐츠는 무조건 넣지 않고, GPT가 쓸지 말지 결정하도록 시스템 프롬프트에만 삽입
+    recovery_candidates = retrieve_emotion_recovery_contents(user_input)
+    
     system_text = system_text.replace("{nickname}", nickname)
     system_text += (
         "\n\n[최근 감정 흐름 요약]\n" + trend +
         "\n\n[전체 감정 요약]\n" + full_summary +
-        "\n\n[규칙] 위 두 요약을 반드시 참고하여 사용자의 상태를 이해하고 대화에 반영하세요."
+        "\n\n[규칙] 위 두 요약을 반드시 참고하여 사용자의 상태를 이해하고 대화에 반영하세요." +
+        "\n\n[참고용 회복 콘텐츠 목록 (필수 아님)]\n" + recovery_candidates +
+        "\n\n※ 위 회복 콘텐츠는 반드시 사용할 필요는 없습니다. "
+        "GPT가 보기에 사용자가 정서적 회복이 필요하다고 느껴진다면, 자연스럽게 대화에 녹여서 추천해 주세요. "
+        "그렇지 않으면 무시하셔도 됩니다."
     )
     # 3) 프롬프트 구성
     prompt = ChatPromptTemplate.from_messages([
@@ -112,7 +124,7 @@ def chat_with_bot(
     ])
 
     # 4) LangChain Agent 준비
-    agent    = create_openai_functions_agent(llm, tools, prompt)
+    agent = create_openai_tools_agent(llm, tools, prompt)
     executor = AgentExecutor(agent=agent, tools=tools,
                              handle_parsing_errors=True, max_iterations=5)
         
