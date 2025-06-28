@@ -9,10 +9,10 @@
 - [⚙ 시스템 아키텍처](#-시스템-아키텍처)
 - [📊 ERD 다이어그램](#-erd-다이어그램)
 - [🖥 화면 구성 미리보기](#-화면-구성-미리보기)
-- [🧼 데이터 전처리 과정](#-데이터-전처리-과정)
 - [🛠 기술 스택](#-기술-스택)
-- [🛠 설치 및 실행 (AI 서버 FastAPI)](#-설치-및-실행-ai-서버-fastapi)
+- [🧼 데이터 전처리 과정](#-데이터-전처리-과정)
 - [📂 FastAPI 서버 디렉토리 구조](#-fastapi-서버-디렉토리-구조)
+- [🛠 설치 및 실행 (AI 서버 FastAPI)](#-설치-및-실행-ai-서버-fastapi)
 - [📌 사용 예시](#-사용-예시)
 - [🤯 트러블슈팅 요약](#-트러블슈팅-요약)
 - [👨‍👩‍👧‍👦 팀원 역할](#-팀원-역할)
@@ -115,6 +115,21 @@ AI : https://github.com/julle0123/milo-ai
   <td align="center"><img src="https://github.com/user-attachments/assets/e637d784-c728-4e60-a484-7719377532f4" width="200"/><br/>설정</td>
 </tr>
 </table>
+---
+
+## 🛠 기술 스택
+
+| 구분 | 사용 기술 |
+|------|-----------|
+| **Frontend** | ![](https://img.shields.io/badge/HTML-E34F26?style=for-the-badge&logo=html5&logoColor=white) ![](https://img.shields.io/badge/CSS-1572B6?style=for-the-badge&logo=css3&logoColor=white) ![](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) ![](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black) ![](https://img.shields.io/badge/Chart.js-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white) ![](https://img.shields.io/badge/axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white) |
+| **Backend (API)** | ![](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white) ![](https://img.shields.io/badge/SpringBoot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white) ![](https://img.shields.io/badge/JPA-007396?style=for-the-badge&logo=hibernate&logoColor=white) ![](https://img.shields.io/badge/SpringSecurity-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white) ![](https://img.shields.io/badge/Lombok-EC722E?style=for-the-badge&logo=lombok&logoColor=white) <br>![](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black) ![](https://img.shields.io/badge/RESTful_API-000000?style=for-the-badge) ![](https://img.shields.io/badge/CORS_Global-FFB300?style=for-the-badge)|
+| **Backend (AI)** | ![](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white) ![](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) ![](https://img.shields.io/badge/Pydantic-007EC6?style=for-the-badge) ![](https://img.shields.io/badge/SQLAlchemy-FFCA28?style=for-the-badge) ![](https://img.shields.io/badge/Uvicorn-000000?style=for-the-badge) |
+| **AI & LLM** | ![](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white) ![](https://img.shields.io/badge/LangChain-000000?style=for-the-badge) ![](https://img.shields.io/badge/AgentTool-0A0A0A?style=for-the-badge) ![](https://img.shields.io/badge/RAG-000000?style=for-the-badge) |
+| **Database** | ![](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white) ![](https://img.shields.io/badge/Qdrant-1A1A1A?style=for-the-badge) |
+| **Infra / Deploy** | ![](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) ![](https://img.shields.io/badge/NaverCloud-03C75A?style=for-the-badge&logo=naver&logoColor=white) |
+| **개발 도구** | ![](https://img.shields.io/badge/IntelliJ-000000?style=for-the-badge&logo=intellijidea&logoColor=white) ![](https://img.shields.io/badge/VSCode-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white) ![](https://img.shields.io/badge/Google_Colab-F9AB00?style=for-the-badge&logo=googlecolab&logoColor=white) |
+| **기획 / 디자인 도구** | ![](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white) ![](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white) |
+| **협업 도구** | ![](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white) |
 
 ---
 
@@ -159,36 +174,7 @@ text,label
 - openai 3-small-textembedding 모델 활용하여 감정 + 사용자입력 데이터 30만 문장 임베딩
 - metadata에 입력에 대한 응답 등을 포함하여 qdrant 벡터 DB에 저장하여 rag에 활용
 ---
-## 🛠 기술 스택
 
-| 구분 | 사용 기술 |
-|------|-----------|
-| **Frontend** | ![](https://img.shields.io/badge/HTML-E34F26?style=for-the-badge&logo=html5&logoColor=white) ![](https://img.shields.io/badge/CSS-1572B6?style=for-the-badge&logo=css3&logoColor=white) ![](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) ![](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black) ![](https://img.shields.io/badge/Chart.js-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white) ![](https://img.shields.io/badge/axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white) |
-| **Backend (API)** | ![](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white) ![](https://img.shields.io/badge/SpringBoot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white) ![](https://img.shields.io/badge/JPA-007396?style=for-the-badge&logo=hibernate&logoColor=white) ![](https://img.shields.io/badge/SpringSecurity-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white) |
-| **Backend (AI)** | ![](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white) ![](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) ![](https://img.shields.io/badge/Pydantic-007EC6?style=for-the-badge) ![](https://img.shields.io/badge/SQLAlchemy-FFCA28?style=for-the-badge) ![](https://img.shields.io/badge/Uvicorn-000000?style=for-the-badge) |
-| **AI & LLM** | ![](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white) ![](https://img.shields.io/badge/LangChain-000000?style=for-the-badge) ![](https://img.shields.io/badge/AgentTool-0A0A0A?style=for-the-badge) ![](https://img.shields.io/badge/RAG-000000?style=for-the-badge) |
-| **Database** | ![](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white) ![](https://img.shields.io/badge/Qdrant-1A1A1A?style=for-the-badge) |
-| **Infra / Deploy** | ![](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) ![](https://img.shields.io/badge/NaverCloud-03C75A?style=for-the-badge&logo=naver&logoColor=white) |
-| **개발 도구** | ![](https://img.shields.io/badge/IntelliJ-000000?style=for-the-badge&logo=intellijidea&logoColor=white) ![](https://img.shields.io/badge/VSCode-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white) |
-| **기획 / 디자인 도구** | ![](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white) ![](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white) |
-| **협업 도구** | ![](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white) |
-
----
-
-## 🛠 설치 및 실행 (AI 서버 FastAPI)
-
-```bash
-# 1. 가상환경 생성 및 활성화 (선택)
-python -m venv venv <br>
-source venv/bin/activate
-
-# 2. 라이브러리 설치
-pip install -r requirements.txt
-
-# 3. FastAPI 실행
-uvicorn main:app --reload --port 8000
-```
----
 ## 📂 FastAPI 서버 디렉토리 구조
 --> 프론트와 백엔드는 다른곳에 기록됨.
 
@@ -237,6 +223,21 @@ milp-ai/
 └── requirements.txt # 의존성 목록
 ```
 ---
+## 🛠 설치 및 실행 (AI 서버 FastAPI)
+
+```bash
+# 1. 가상환경 생성 및 활성화 (선택)
+python -m venv venv <br>
+source venv/bin/activate
+
+# 2. 라이브러리 설치
+pip install -r requirements.txt
+
+# 3. FastAPI 실행
+uvicorn main:app --reload --port 8000
+```
+---
+
 ## 📌 사용 예시
 
 ### 💬 사용자가 Milo에게 입력한 문장
@@ -254,7 +255,7 @@ milp-ai/
 
 ### 🔍 2. 유사 감정 사례 검색 (Qdrant + RAG)
 
-> 과거 사용자가 기록한 유사 대화 3건 추출 후 GPT 프롬프트에 포함
+> 여러 상담 데이터와 유사한 대화 3건 추출 후 GPT 프롬프트에 포함
 
 ---
 
@@ -271,6 +272,7 @@ milp-ai/
 - 상담 내용 → `chat_log_TB`
 - 감정 분석 결과 → `daily_emotion_report_TB`
 - GPT 응답 → 회복 문장 추천 또는 저장 유도
+- 3일 이상 하루 감정 분석 리포트가 작성 시 감정 아카이브 작성 -> `monthly_emotion_summary_TB`
 
 ---
 
