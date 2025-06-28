@@ -185,7 +185,7 @@ pip install -r requirements.txt
 uvicorn main:app --reload --port 8000
 
 ---
-📂 FastAPI 서버 디렉토리 구조
+## 📂 FastAPI 서버 디렉토리 구조
 --> 프론트와 백엔드는 다른곳에 기록됨.
 
 ```
