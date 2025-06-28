@@ -3,7 +3,7 @@
 - [🧠 프로젝트 소개](#-마음을-기억하는-챗봇-milo)
 - [👀 서비스 소개](#-서비스-소개)
 - [📅 프로젝트 기간](#-프로젝트-기간)
-- [📎 프론트 / 백엔드 / AI 주소](#-프론트--백엔드--ai-주소)
+- [📎 GitHub 주소 (Frontend / Backend / AI)](#-github-주소-frontend--backend--ai)
 - [⭐ 주요 기능](#-주요-기능)
 - [🔁 서비스 동작 구조](#-서비스-동작-구조)
 - [⚙ 시스템 아키텍처](#-시스템-아키텍처)
@@ -43,7 +43,7 @@
 
 ---
 
-## 📎 프론트 / 백엔드 / AI 주소
+## 📎 GitHub 주소 (Frontend / Backend / AI)
 백엔드 : https://github.com/suhwan87/milo-be <br>
 프론트 : https://github.com/suhwan87/milo-fe <br>
 AI : https://github.com/julle0123/milo-ai
@@ -177,8 +177,12 @@ AI : https://github.com/julle0123/milo-ai
 | 6. 분류용 데이터셋 생성 | 감정 분석 학습용 `text`, `label` 컬럼 구성 |
 
 ---
-
-### 🧠 최종 전처리 샘플
+### 🧠 전처리한 데이터를 토대로 만든 감정분류 모델(hugging-face)
+- https://huggingface.co/Seonghaa/emotion-koelectra
+- KCELECTRA 기반
+- 감정분류 적용
+---
+### 🎯 최종 전처리 샘플
 
 ```csv
 text,label
@@ -187,9 +191,9 @@ text,label
 "그 사람이 또 나를 무시했어. 너무 화가 나.","분노"
 ```
 ---
-### 전처리한 데이터를 토대로 만든 학습 모델(hugging-face)
-https://huggingface.co/Seonghaa/emotion-koelectra
-
+### 🎒 임베딩 후 qdrant 벡터 DB 저장
+- openai 3-small-textembedding 모델 활용하여 30만 문장 임베딩
+- metadata를 포함하여 qdrant 벡터 DB에 저장하여 rag에 활용
 ---
 ## 🛠 기술 스택
 
@@ -209,7 +213,7 @@ https://huggingface.co/Seonghaa/emotion-koelectra
 
 ## 🛠 설치 및 실행 (AI 서버 FastAPI)
 
-bash
+```bash
 # 1. 가상환경 생성 및 활성화 (선택)
 python -m venv venv <br>
 source venv/bin/activate
@@ -219,7 +223,7 @@ pip install -r requirements.txt
 
 # 3. FastAPI 실행
 uvicorn main:app --reload --port 8000
-
+```
 ---
 ## 📂 FastAPI 서버 디렉토리 구조
 --> 프론트와 백엔드는 다른곳에 기록됨.
@@ -264,8 +268,8 @@ milp-ai/
 ├── .env # 환경 변수 설정 파일
 ├── .gitignore # git push 무시
 ├── Dockerfile # FastAPI Docker 배포 환경
-├── README.md
-├── docker-compose.yml
+├── README.md # 프로젝트 설명 파일
+├── docker-compose.yml # 전체 서비스 연동 설정
 └── requirements.txt # 의존성 목록
 ```
 ---
