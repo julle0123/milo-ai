@@ -44,20 +44,22 @@
 ---
 
 ## 📎 GitHub 주소 (Frontend / Backend / AI)
-백엔드 : https://github.com/suhwan87/milo-be <br>
-프론트 : https://github.com/suhwan87/milo-fe <br>
-AI : https://github.com/julle0123/milo-ai
+- Frontend : https://github.com/suhwan87/milo-fe <br>
+- Backend (Spring) : https://github.com/suhwan87/milo-be <br>
+- AI Server (FastAPI) : https://github.com/julle0123/milo-ai
 
 ---
 
 ## ⭐ 주요 기능
-- 정서 지원 챗봇
-- 감정 흐름 분석 및 자동 데일리 요약 리포트 생성
-- 감정 회복 문장 저장 및 폴더 기반 관리 기능
-- 역할 시뮬레이션 챗봇(이름/관계/말투/성격/상황 설정 기반 감정 리허설)
-- 감정 이모지 캘린더 + 월간 감정 레이더 차트 시각화
-- 사용자 감정에 맞는 콘텐츠 추천
-- 사용자 정서 위험 탐지 → GPT 안정 응답 + 상담기관 안내
+
+| 구분         | 설명                                                                 |
+|--------------|----------------------------------------------------------------------|
+| 상담 챗봇     | 감정을 분석하고 위로의 말을 건네는 GPT 기반 상담 챗봇              |
+| 역할극 챗봇   | 이름/관계/말투/상황을 설정한 감정 리허설 챗봇                       |
+| 감정 리포트   | 일일/월간 감정 흐름 요약 리포트 생성 및 저장                        |
+| 회복 콘텐츠   | 유사 감정 기반 회복 문장 추천 및 보관함 구성                        |
+| 시각화 기능   | 감정 이모지 캘린더 / 월간 감정 레이더 차트                         |
+| 위험 감지     | 감정 분석 결과 위기 신호 시 안정 응답 + 기관 연결                  |
 
 ---
 
@@ -122,8 +124,8 @@ AI : https://github.com/julle0123/milo-ai
 | 구분 | 사용 기술 |
 |------|-----------|
 | **Frontend** | ![](https://img.shields.io/badge/HTML-E34F26?style=for-the-badge&logo=html5&logoColor=white) ![](https://img.shields.io/badge/CSS-1572B6?style=for-the-badge&logo=css3&logoColor=white) ![](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) ![](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black) ![](https://img.shields.io/badge/Chart.js-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white) ![](https://img.shields.io/badge/axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white) |
-| **Backend (API)** | ![](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white) ![](https://img.shields.io/badge/SpringBoot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white) ![](https://img.shields.io/badge/JPA-007396?style=for-the-badge&logo=hibernate&logoColor=white) ![](https://img.shields.io/badge/SpringSecurity-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white) ![](https://img.shields.io/badge/Lombok-EC722E?style=for-the-badge&logo=lombok&logoColor=white) <br>![](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black) ![](https://img.shields.io/badge/RESTful_API-000000?style=for-the-badge) ![](https://img.shields.io/badge/CORS_Global-FFB300?style=for-the-badge)|
-| **Backend (AI)** | ![](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white) ![](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) ![](https://img.shields.io/badge/Pydantic-007EC6?style=for-the-badge) ![](https://img.shields.io/badge/SQLAlchemy-FFCA28?style=for-the-badge) ![](https://img.shields.io/badge/Uvicorn-000000?style=for-the-badge) |
+| **Backend** | ![](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white) ![](https://img.shields.io/badge/SpringBoot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white) ![](https://img.shields.io/badge/JPA-007396?style=for-the-badge&logo=hibernate&logoColor=white) ![](https://img.shields.io/badge/SpringSecurity-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white) ![](https://img.shields.io/badge/Lombok-EC722E?style=for-the-badge&logo=lombok&logoColor=white) <br>![](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black) ![](https://img.shields.io/badge/RESTful_API-000000?style=for-the-badge) ![](https://img.shields.io/badge/CORS_Global-FFB300?style=for-the-badge)|
+| **AI Server** | ![](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white) ![](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) ![](https://img.shields.io/badge/Pydantic-007EC6?style=for-the-badge) ![](https://img.shields.io/badge/SQLAlchemy-FFCA28?style=for-the-badge) ![](https://img.shields.io/badge/Uvicorn-000000?style=for-the-badge) |
 | **AI & LLM** | ![](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white) ![](https://img.shields.io/badge/LangChain-000000?style=for-the-badge) ![](https://img.shields.io/badge/AgentTool-0A0A0A?style=for-the-badge) ![](https://img.shields.io/badge/RAG-000000?style=for-the-badge) |
 | **Database** | ![](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white) ![](https://img.shields.io/badge/Qdrant-1A1A1A?style=for-the-badge) |
 | **Infra / Deploy** | ![](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) ![](https://img.shields.io/badge/NaverCloud-03C75A?style=for-the-badge&logo=naver&logoColor=white) |
@@ -227,7 +229,7 @@ milp-ai/
 
 ```bash
 # 1. 가상환경 생성 및 활성화 (선택)
-python -m venv venv <br>
+python -m venv venv 
 source venv/bin/activate
 
 # 2. 라이브러리 설치
@@ -296,6 +298,4 @@ uvicorn main:app --reload --port 8000
 ---
 ## 📄 라이선스
 
-본 프로젝트는 교육 목적의 팀 프로젝트로 진행되었으며,
-외부 사용 시 사전 허가가 필요합니다.
-
+본 프로젝트는 오픈된 학습 자료로 누구나 자유롭게 사용할 수 있습니다.  
