@@ -96,7 +96,7 @@
   <td align="center"><img src="https://github.com/user-attachments/assets/1267be99-cc0c-490e-8cc8-350f0e0b997f" width="200"/><br/>메인 화면</td>
   <td align="center"><img src="https://github.com/user-attachments/assets/8c13527b-d711-47de-944e-1cab9f73b29f" width="200"/><br/>비밀번호 찾기</td>
   <td align="center"><img src="https://github.com/user-attachments/assets/9e59fb33-529d-4cd2-9d9c-09f62f4c4392" width="200"/><br/>아이디 찾기</td>
-  <td align="center"><img src="github.com/user-attachments/assets/9c23d290-dff0-4ca9-8b82-f147e0d4454a" width="200"/><br/>회원가입</td>
+  <td align="center"><img src="https://github.com/user-attachments/assets/2bae1163-dcc2-4117-9bcc-9c92a0294070" width="200"/><br/>회원가입</td>
 </tr>
 <tr>
   <td align="center"><img src="https://github.com/user-attachments/assets/131eabc3-1203-475e-9ae5-4fc6e6644509" width="200"/><br/>상담 챗봇</td>
