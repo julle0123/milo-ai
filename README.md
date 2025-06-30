@@ -78,7 +78,7 @@
 
 ## ⚙ 시스템 아키텍처
 
-![Image](https://github.com/user-attachments/assets/310b3b20-e602-4dcb-9ba0-0ca0d78588d5)
+![Image](https://github.com/user-attachments/assets/fd6b5494-61b9-4d5f-880b-b53722c78ba2)
 
 ---
 
