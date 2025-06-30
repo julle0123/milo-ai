@@ -47,7 +47,7 @@ async def end_session(user_id: str, db: Session = Depends(get_db)):
 
             # 리포트를 DB에 저장 (이미 있으면 업데이트)
             #    - 테이블: daily_emotion_report_TB
-            save_or_update_daily_report(db, user_id, today, result)
+            await save_or_update_daily_report(db, user_id, today, result)
 
             # 정상 저장된 경우 상태 및 대표 감정 반환
             return {"status": "saved", "main_emotion": result["MAIN_EMOTION"]}

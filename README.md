@@ -160,9 +160,9 @@
 
 ---
 ### 🧠 전처리한 데이터를 토대로 만든 감정분류 모델(hugging-face)
-- https://huggingface.co/Seonghaa/emotion-koelectra
 - KCELECTRA 활용
 - 만들어진 모델로 데이터 전체 감정분류 적용
+- https://huggingface.co/Seonghaa/emotion-koelectra  --> 만든 감정분류 모델
 ---
 ### 🎯 최종 전처리 샘플
 
@@ -199,23 +199,23 @@ milp-ai/
 │  ├── models/ # SQLAlchemy 모델
 │  │ ├── __init__.py 
 │  │ ├── base.py # Base 선언
-│  │ ├── chat_log.py
-│  │ ├── daily_emotion_report.py
-│  │ ├── monthly_emotion_summary.py
-│  │ ├── rolecharacter.py
-│  │ ├── role_play_log.py
+│  │ ├── chat_log.py   # 상담 대화 기록DB
+│  │ ├── daily_emotion_report.py # 하루 감정 리포트DB
+│  │ ├── monthly_emotion_summary.py # 월간 감정 리포트DB
+│  │ ├── rolecharacter.py  # 역할DB
+│  │ ├── role_play_log.py  # 역할 챗봇 대화 기록 DB
 │  │ ├── schema.py # 공통 Pydantic 스키마
-│  │ └── user.py
+│  │ └── user.py  # 유저DB
 │  ├── prompt/ # GPT 시스템 프롬프트 정의
-│  │ ├── emotion_prompt_emotional.txt
-│  │ ├── emotion_prompt_practical.txt
-│  │ └── roleplay_prompt.txt
+│  │ ├── emotion_prompt_emotional.txt  # 공감형(F) 프롬프트
+│  │ ├── emotion_prompt_practical.txt  # 조언형(T) 프롬프트
+│  │ └── roleplay_prompt.txt           # 역할 챗봇 프롬프트
 │  ├── services/ # 비즈니스 로직 처리
 │  │ ├── agent.py # AgentTool 기반 응답 생성
 │  │ ├── agent_roleplay.py # 역할극 응답 처리
 │  │ ├── emotion_service.py # 감정 분석/백터화
 │  │ ├── memory.py # 기억 공간
-│  │ ├── rag_service.py # rag
+│  │ ├── rag_service.py # rag 기능
 │  │ └── report_service.py # 감정 리포트 저장 및 업데이트
 │  ├── main.py # FastAPI 앱 진입점
 ├── .env # 환경 변수 설정 파일
