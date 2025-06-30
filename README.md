@@ -184,46 +184,46 @@ text,label
 ```
 milp-ai/
 ├──.github
-│ └── workflows # git-action
+│ └── workflows                        # git-action
 ├──app
-│  ├── api/ # 라우터 정의
-│  │ ├── chat.py # 상담 챗봇 API
-│  │ ├── chat_end.py # 채팅 종료 API
-│  │ ├── log.py # 로그 저장 API
-│  │ ├── report.py # 리포트 기록 API
-│  │ └── roleplay.py # 역할극 API
-│  ├── core/ # 공통 설정 모듈
-│  │ ├── client.py # openai 설정
-│  │ ├── config.py # Settings(.env)
-│  │ └── db.py # DB 연결 / 세션 관리
-│  ├── models/ # SQLAlchemy 모델
-│  │ ├── __init__.py 
-│  │ ├── base.py # Base 선언
-│  │ ├── chat_log.py   # 상담 대화 기록DB
-│  │ ├── daily_emotion_report.py # 하루 감정 리포트DB
-│  │ ├── monthly_emotion_summary.py # 월간 감정 리포트DB
-│  │ ├── rolecharacter.py  # 역할DB
-│  │ ├── role_play_log.py  # 역할 챗봇 대화 기록 DB
-│  │ ├── schema.py # 공통 Pydantic 스키마
-│  │ └── user.py  # 유저DB
-│  ├── prompt/ # GPT 시스템 프롬프트 정의
+│  ├── api/                            # 라우터 정의
+│  │ ├── chat.py                       # 상담 챗봇 API
+│  │ ├── chat_end.py                   # 채팅 종료 API
+│  │ ├── log.py                        # 로그 저장 API
+│  │ ├── report.py                     # 리포트 기록 API
+│  │ └── roleplay.py                   # 역할극 API
+│  ├── core/                           # 공통 설정 모듈
+│  │ ├── client.py                     # openai 설정
+│  │ ├── config.py                     # Settings(.env)
+│  │ └── db.py                         # DB 연결 / 세션 관리
+│  ├── models/                         # SQLAlchemy 모델
+│  │ ├── __init__.py                   # Python 패키지 인식용 파일 (import 가능하게 함)
+│  │ ├── base.py                       # Base 선언
+│  │ ├── chat_log.py                   # 상담 대화 기록DB
+│  │ ├── daily_emotion_report.py       # 하루 감정 리포트DB
+│  │ ├── monthly_emotion_summary.py    # 월간 감정 리포트DB
+│  │ ├── rolecharacter.py              # 역할DB
+│  │ ├── role_play_log.py              # 역할 챗봇 대화 기록 DB
+│  │ ├── schema.py                     # 공통 Pydantic 스키마
+│  │ └── user.py                       # 유저DB
+│  ├── prompt/                         # GPT 시스템 프롬프트 정의
 │  │ ├── emotion_prompt_emotional.txt  # 공감형(F) 프롬프트
 │  │ ├── emotion_prompt_practical.txt  # 조언형(T) 프롬프트
 │  │ └── roleplay_prompt.txt           # 역할 챗봇 프롬프트
-│  ├── services/ # 비즈니스 로직 처리
-│  │ ├── agent.py # AgentTool 기반 응답 생성
-│  │ ├── agent_roleplay.py # 역할극 응답 처리
-│  │ ├── emotion_service.py # 감정 분석/백터화
-│  │ ├── memory.py # 기억 공간
-│  │ ├── rag_service.py # rag 기능
-│  │ └── report_service.py # 감정 리포트 저장 및 업데이트
-│  ├── main.py # FastAPI 앱 진입점
-├── .env # 환경 변수 설정 파일
-├── .gitignore # git push 무시
-├── Dockerfile # FastAPI Docker 배포 환경
-├── README.md # 프로젝트 설명 파일
-├── docker-compose.yml # 전체 서비스 연동 설정
-└── requirements.txt # 의존성 목록
+│  ├── services/                       # 비즈니스 로직 처리
+│  │ ├── agent.py                      # AgentTool 기반 응답 생성
+│  │ ├── agent_roleplay.py             # 역할극 응답 처리
+│  │ ├── emotion_service.py            # 감정 분석/백터화
+│  │ ├── memory.py                     # 기억 공간
+│  │ ├── rag_service.py                # rag 기능
+│  │ └── report_service.py             # 감정 리포트 저장 및 업데이트
+│  ├── main.py                         # FastAPI 앱 진입점
+├── .env                               # 환경 변수 설정 파일
+├── .gitignore                         # git push 무시
+├── Dockerfile                         # FastAPI Docker 배포 환경
+├── README.md                          # 프로젝트 설명 파일
+├── docker-compose.yml                 # 전체 서비스 연동 설정
+└── requirements.txt                   # 의존성 목록
 ```
 ---
 ## 🛠 설치 및 실행 (AI 서버 FastAPI)
