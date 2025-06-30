@@ -8,6 +8,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from openai import OpenAI
 from app.core.config import settings
 from collections import defaultdict
+import asyncio
 import json
 
 # GPT 호출 클라이언트 (OpenAI API)
@@ -31,71 +32,75 @@ def get_day_conversations(user_id: str, date: str, db: Session) -> list[str]:
 # 2. 하루 감정 분석 결과 저장 (daily_emotion_report_TB)
 # - 기존 데이터 있으면 UPDATE, 없으면 INSERT
 # - 저장 후, 해당 월 일별 리포트가 3개 이상이면 → 월간 리포트 자동 생성
-def save_or_update_daily_report(db: Session, user_id: str, date: str, result: dict):
-    try:
-        date_obj = datetime.strptime(date, "%Y-%m-%d").date()
-        existing = db.query(DailyEmotionReport).filter(
-            DailyEmotionReport.USER_ID == user_id,
-            DailyEmotionReport.DATE == date_obj
-        ).first()
+async def save_or_update_daily_report(db: Session, user_id: str, date_str: str, result: dict):
+    def sync_save(db: Session, user_id: str, date_str: str, result: dict):
+        try:
+            date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+            existing = db.query(DailyEmotionReport).filter(
+                DailyEmotionReport.USER_ID == user_id,
+                DailyEmotionReport.DATE == date_obj
+            ).first()
 
-        result_to_save = {
-            "USER_ID": user_id,
-            "DATE": date_obj,
-            "CREATED_AT": datetime.now(),
-            "MAIN_EMOTION": result.get("MAIN_EMOTION"),
-            "SCORE": result.get("SCORE"),
-            "STABLE": result.get("STABLE"),
-            "JOY": result.get("JOY"),
-            "SADNESS": result.get("SADNESS"),
-            "ANGER": result.get("ANGER"),
-            "ANXIETY": result.get("ANXIETY"),
-            "SUMMARY": result.get("SUMMARY"),
-            "FEEDBACK": result.get("FEEDBACK"),
-            "ENCOURAGEMENT": result.get("ENCOURAGEMENT")
-        }
+            result_to_save = {
+                "USER_ID": user_id,
+                "DATE": date_obj,
+                "CREATED_AT": datetime.now(),
+                "MAIN_EMOTION": result.get("MAIN_EMOTION"),
+                "SCORE": result.get("SCORE"),
+                "STABLE": result.get("STABLE"),
+                "JOY": result.get("JOY"),
+                "SADNESS": result.get("SADNESS"),
+                "ANGER": result.get("ANGER"),
+                "ANXIETY": result.get("ANXIETY"),
+                "SUMMARY": result.get("SUMMARY"),
+                "FEEDBACK": result.get("FEEDBACK"),
+                "ENCOURAGEMENT": result.get("ENCOURAGEMENT")
+            }
 
-        if existing:
-            print("기존 리포트 있음 → UPDATE 강제 수행")
-            for key, value in result_to_save.items():
-                try:
-                    setattr(existing, key, value)
-                    print(f"필드 '{key}' 덮어쓰기 완료")
-                except Exception as e:
-                    print(f"필드 '{key}' 설정 중 오류 발생: {e}")
-        else:
-            print("리포트 없음 → INSERT 시도")
-            report = DailyEmotionReport(**result_to_save)
-            db.add(report)
+            if existing:
+                print("기존 리포트 있음 → UPDATE 강제 수행")
+                for key, value in result_to_save.items():
+                    try:
+                        setattr(existing, key, value)
+                        print(f"필드 '{key}' 덮어쓰기 완료")
+                    except Exception as e:
+                        print(f"필드 '{key}' 설정 중 오류 발생: {e}")
+            else:
+                print("리포트 없음 → INSERT 시도")
+                report = DailyEmotionReport(**result_to_save)
+                db.add(report)
 
-        db.commit()
+            db.commit()
 
-        if not existing:
-            db.refresh(report)
-            print("INSERT 완료 후 MAIN_EMOTION:", report.MAIN_EMOTION)
-        else:
-            db.refresh(existing)
-            print("UPDATE 완료 후 MAIN_EMOTION:", existing.MAIN_EMOTION)
+            if not existing:
+                db.refresh(report)
+                print("INSERT 완료 후 MAIN_EMOTION:", report.MAIN_EMOTION)
+            else:
+                db.refresh(existing)
+                print("UPDATE 완료 후 MAIN_EMOTION:", existing.MAIN_EMOTION)
 
-        year = date_obj.year
-        month = date_obj.month
-        first_day = date(year, month, 1)
-        next_month = date(year + int(month == 12), (month % 12) + 1, 1)
+            year = date_obj.year
+            month = date_obj.month
+            first_day = date(year, month, 1)
+            next_month = date(year + int(month == 12), (month % 12) + 1, 1)
 
-        daily_reports = db.query(DailyEmotionReport).filter(
-            DailyEmotionReport.USER_ID == user_id,
-            DailyEmotionReport.DATE >= first_day,
-            DailyEmotionReport.DATE < next_month
-        ).all()
+            daily_reports = db.query(DailyEmotionReport).filter(
+                DailyEmotionReport.USER_ID == user_id,
+                DailyEmotionReport.DATE >= first_day,
+                DailyEmotionReport.DATE < next_month
+            ).all()
 
-        if len(daily_reports) >= 3:
-            print("3개 이상 일일 리포트 존재 → 월간 리포트 생성 시도")
-            generate_monthly_report_from_daily(db, user_id, year, month)
+            if len(daily_reports) >= 3:
+                print("3개 이상 일일 리포트 존재 → 월간 리포트 생성 시도")
+                generate_monthly_report_from_daily(db, user_id, year, month)
 
-    except SQLAlchemyError as e:
-        db.rollback()
-        print("DB 저장 실패:", str(e))
-        raise
+        except SQLAlchemyError as e:
+            db.rollback()
+            print("DB 저장 실패:", str(e))
+            raise
+
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(None, lambda: sync_save(db, user_id, date_str, result))
 
 # 3. GPT 기반 월간 요약 문장 생성
 def gpt_generate_monthly_summary(avg_scores: dict, session_count: int, ym: str) -> str:

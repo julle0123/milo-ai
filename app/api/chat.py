@@ -19,7 +19,7 @@ router = APIRouter()
 # 사용자는 하루 대화를 종료하고, 시스템은 그 시점의 감정을 기록
 @router.post("/", response_model=ChatResponse)
 async def chat(req: ChatRequest, db: Session = Depends(get_db)):
-    output_text = chat_with_bot(
+    output_text = await chat_with_bot(
         user_input=req.input,
         session_id=req.user_id,
         user_id=req.user_id,

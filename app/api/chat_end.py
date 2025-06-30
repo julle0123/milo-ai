@@ -22,7 +22,7 @@ router = APIRouter()
 # - 호출 위치: 프론트엔드에서 대화 종료 시점
 
 @router.post("/session/end")
-def end_session(user_id: str, db: Session = Depends(get_db)):
+async def end_session(user_id: str, db: Session = Depends(get_db)):
     # 오늘 날짜를 'YYYY-MM-DD' 형식으로 생성
     today = datetime.now().strftime("%Y-%m-%d")
 
@@ -34,7 +34,7 @@ def end_session(user_id: str, db: Session = Depends(get_db)):
     if messages:
         try:
             # GPT 모델 기반으로 오늘 대화 전체 감정 요약/분석 수행
-            result = summarize_day_conversation(messages, user_id, today)
+            result = await summarize_day_conversation(messages, user_id, today)
 
             # 감정 리포트 저장에 필요한 모든 필수 키가 있는지 검증
             required_keys = {

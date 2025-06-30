@@ -1,6 +1,7 @@
 # app/services/emotion_service.py
 from typing import List, Dict
 import json
+import asyncio
 from app.models.user import User
 from app.core.client import llm
 from sqlalchemy.orm import Session
@@ -48,7 +49,7 @@ def convert_to_main_emotion(score_dict: Dict[str, float]) -> str:
     return max(five_emotion_scores.items(), key=lambda x: x[1])[0]
 
 # 하루치 대화 리스트를 GPT에게 넘겨 감정 요약 및 점수 추출
-def summarize_day_conversation(messages: List[str], user_id: str, date: str) -> Dict:
+async def summarize_day_conversation(messages: List[str], user_id: str, date: str) -> Dict:
     combined_text = "\n".join(messages)
 
     prompt = f"""
@@ -97,8 +98,19 @@ def summarize_day_conversation(messages: List[str], user_id: str, date: str) -> 
         raw_output = raw_output.lstrip("```").rstrip("```").strip()
 
     try:
-        parsed = json.loads(raw_output)
+        loop = asyncio.get_event_loop()
+        # 동기 GPT 호출을 별도 스레드에서 실행
+        response = await loop.run_in_executor(None, lambda: llm.invoke(prompt))
+        raw_output = response.content.strip()
 
+        print("🧠 GPT 응답 원문:\n", raw_output)
+
+        if raw_output.startswith("```json"):
+            raw_output = raw_output.lstrip("```json").rstrip("```").strip()
+        elif raw_output.startswith("```"):
+            raw_output = raw_output.lstrip("```").rstrip("```").strip()
+
+        parsed = json.loads(raw_output)
         main_emotion = convert_to_main_emotion(parsed)
 
         return {

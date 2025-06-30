@@ -1,4 +1,5 @@
 import uuid
+import asyncio
 from typing import Optional          
 from langchain.agents import create_openai_functions_agent, create_openai_tools_agent, AgentExecutor
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
@@ -79,7 +80,7 @@ def load_prompt_template(persona: str) -> str:
 #   - db: SQLAlchemy DB 세션
 # 출력:
 #   - GPT 기반 감정 상담 응답 문자열
-def chat_with_bot(
+async def chat_with_bot(
     user_input: str,
     session_id: Optional[str] = None,
     user_id: Optional[str] = None,
@@ -95,14 +96,12 @@ def chat_with_bot(
     system_text = load_prompt_template(persona)
     nickname = get_user_nickname(user_id, db=db)
     trend = get_emotion_trend_text(user_id, db=db)
-    retrieved = retrieve_similar_cases_for_rag(user_input)
+    retrieved = await retrieve_similar_cases_for_rag(user_input)
     full_summary = summarize_full_chat_history(user_id, db)
     
-    # 상담 유사사례는 항상 사용
-    retrieved = retrieve_similar_cases_for_rag(user_input)
 
     # 회복 콘텐츠는 무조건 넣지 않고, GPT가 쓸지 말지 결정하도록 시스템 프롬프트에만 삽입
-    recovery_candidates = retrieve_emotion_recovery_contents(user_input)
+    recovery_candidates = await retrieve_emotion_recovery_contents(user_input)
     
     system_text = system_text.replace("{nickname}", nickname)
     system_text += (
@@ -137,14 +136,20 @@ def chat_with_bot(
 
     # 6) 실행 및 예외 처리
     try:
-        response = memory_agent.invoke(
-            {
-                "input": user_input,
-                "system_text": system_text,
-                "retrieved":   retrieved,
-            },
-            config={"configurable": {"session_id": session_id}}
+        loop = asyncio.get_event_loop()
+        # run_in_executor를 사용해 invoke를 비동기처럼 실행
+        response = await loop.run_in_executor(
+            None,
+            lambda: memory_agent.invoke(
+                {
+                    "input": user_input,
+                    "system_text": system_text,
+                    "retrieved": retrieved,
+                },
+                config={"configurable": {"session_id": session_id}}
+            )
         )
         return response["output"] if isinstance(response, dict) else str(response)
+
     except Exception as e:
         return f"오류: {e}"
