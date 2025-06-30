@@ -94,9 +94,9 @@
 <tr>
   <td align="center"><img src="https://github.com/user-attachments/assets/870979ed-ebfc-422d-a4d0-31590f179da4" width="200"/><br/>로그인</td>
   <td align="center"><img src="https://github.com/user-attachments/assets/1267be99-cc0c-490e-8cc8-350f0e0b997f" width="200"/><br/>메인 화면</td>
-  <td align="center"><img src="https://github.com/user-attachments/assets/58ab9ae5-37a1-42c2-afec-01888b107022" width="200"/><br/>비밀번호 찾기</td>
-  <td align="center"><img src="https://github.com/user-attachments/assets/2aaeef16-529b-4248-be7a-7423663cad39" width="200"/><br/>아이디 찾기</td>
-  <td align="center"><img src="https://github.com/user-attachments/assets/8a03fe04-8796-4920-b3e0-38fd86bc38fa" width="200"/><br/>회원가입</td>
+  <td align="center"><img src="https://github.com/user-attachments/assets/8c13527b-d711-47de-944e-1cab9f73b29f" width="200"/><br/>비밀번호 찾기</td>
+  <td align="center"><img src="https://github.com/user-attachments/assets/9e59fb33-529d-4cd2-9d9c-09f62f4c4392" width="200"/><br/>아이디 찾기</td>
+  <td align="center"><img src="github.com/user-attachments/assets/9c23d290-dff0-4ca9-8b82-f147e0d4454a" width="200"/><br/>회원가입</td>
 </tr>
 <tr>
   <td align="center"><img src="https://github.com/user-attachments/assets/131eabc3-1203-475e-9ae5-4fc6e6644509" width="200"/><br/>상담 챗봇</td>
@@ -116,6 +116,8 @@
   <td align="center"><img src="https://github.com/user-attachments/assets/c987293d-7871-4d9f-a35e-3a538936464f" width="200"/><br/>역할 챗봇</td>
   <td align="center"><img src="https://github.com/user-attachments/assets/209a2433-00f8-4a27-a192-ab89ce9701d8" width="200"/><br/>회복문장</td>
   <td align="center"><img src="https://github.com/user-attachments/assets/e637d784-c728-4e60-a484-7719377532f4" width="200"/><br/>설정</td>
+  <td align="center"><img src="https://github.com/user-attachments/assets/093747ae-02be-417b-bf0a-e9a16db6e221" width="200"/><br/>문의하기</td>
+  <td align="center"><img src="https://github.com/user-attachments/assets/a1f8c570-74de-41d8-b9f0-60d2c10993de" width="200"/><br/>회원탈퇴</td>
 </tr>
 </table>
 ---
