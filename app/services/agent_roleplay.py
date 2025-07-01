@@ -79,7 +79,7 @@ def get_roleplay_chain(prompt_text: str, user_id: str, character_id: int, db: Se
         MessagesPlaceholder(variable_name="history"),
         ("user", "{input}")
     ])
-    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.5)
+    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
     return RunnableWithMessageHistory(
         prompt | llm,
