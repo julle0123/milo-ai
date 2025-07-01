@@ -288,7 +288,7 @@ uvicorn main:app --reload --port 8000
 | agent 구성시  create_react_agent()에서 agent_scratchpad 변수에 문제 발생 | 변수가 문자열로 전달되는데, 실제로는 메시지 리스트를 기대하기 때문에 발생, `create_react_agent()`는 특정한 프롬프트 구조를 요구, `agent_scratchpad`는 `MessagesPlaceholder`가 아닌 일반 문자열 플레이스홀더여야 함. | create_react_agent에서 create_openai_functions_agent로 전환 |
 | async def 기반으로 서비스 함수 수정 이후, 일부 DB 호출이나 OpenAI API 응답이 정상 동작하지 않음. | SQLAlchemy의 Session 객체는 기본적으로 동기이며, 이를 async 함수에서 그대로 사용할 경우 오류 발생. | 비동기 처리를 도입하되, DB 작업은 여전히 sync 방식으로 유지하거나 AsyncSession을 명확히 도입해야 함. 또는 asyncio.run() 사용을 피하고 명시적으로 await 처리해야 함. |
 | TrainingArguments 클래스의 evaluation_strategy 인자에서 오류가 발생 | TrainingArguments 클래스의 evaluation_strategy 인자가 eval_strategy로 변경되어 기존 코드에서 evaluation_strategy를 사용하면 다음과 같은 오류가 발생 | 코드에서 TrainingArguments를 정의할 때 evaluation_strategy를 eval_strategy로 변경하면 문제가 해결! |
-
+|EmotionSummary를 사용하여 GPT 응답을 구조화하고자 할 때, JsonOutputParser로 파싱한 후 .joy 같은 속성 접근 시 오류가 발생|- LangChain의 `JsonOutputParser`는 `pydantic_object=EmotionSummary` 옵션을 사용하더라도 내부적으로 parsing이 실패하면 **dict로 fallback** 되는 경우가 있음. 이때 `parsed.joy`처럼 **객체 속성**으로 접근하면 오류 발생 마찬가지로 `.dict()` 메서드도 **dict에는 존재하지 않기 때문에** 에러가 발생|모든 필드 접근을 딕셔너리 키 방식으로 변경 summary, feedback, encouragement 등 모든 필드를 parsed_dict['필드명'] 형태로 접근하도록 수정|
 ---
 
 ## 👨‍👩‍👧‍👦 팀원 역할

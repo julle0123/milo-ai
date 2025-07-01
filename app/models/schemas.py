@@ -1,5 +1,5 @@
 # app/models/schemas.py
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime
 from typing import Optional
 
@@ -41,3 +41,15 @@ class ChatLogResponse(ChatLogCreate):
 # 월간 리포트 생성 요청 스키마
 class MonthlyReportRequest(BaseModel):
     user_id: str
+    
+    
+# 감정 요약 응답 구조
+class EmotionSummary(BaseModel):
+    joy: float = Field(..., description="기쁨 점수 (0~1)")
+    sadness: float = Field(..., description="슬픔 점수 (0~1)")
+    anger: float = Field(..., description="분노 점수 (0~1)")
+    anxiety: float = Field(..., description="불안 점수 (0~1)")
+    stable: float = Field(..., description="안정 점수 (0~1)")
+    summary: str
+    feedback: str
+    encouragement: str

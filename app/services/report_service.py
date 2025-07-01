@@ -123,7 +123,7 @@ def gpt_generate_monthly_summary(avg_scores: dict, session_count: int, ym: str) 
             {"role": "system", "content": "당신은 공감에 기반한 심리상담가입니다."},
             {"role": "user", "content": prompt}
         ],
-        temperature=0.6,
+        temperature=0.4,
         max_tokens=400
     )
     return res.choices[0].message.content.strip()

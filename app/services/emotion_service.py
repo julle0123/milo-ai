@@ -6,7 +6,10 @@ from app.models.user import User
 from app.core.client import llm
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
+from app.models.schemas import EmotionSummary
 from app.models.daily_emotion_report import DailyEmotionReport
+from langchain_core.output_parsers import JsonOutputParser
+from langchain.prompts import PromptTemplate
 
 
 # 문장 단위 감정 분류용 (6종)
@@ -52,10 +55,13 @@ def convert_to_main_emotion(score_dict: Dict[str, float]) -> str:
 async def summarize_day_conversation(messages: List[str], user_id: str, date: str) -> Dict:
     combined_text = "\n".join(messages)
 
-    prompt = f"""
+    parser = JsonOutputParser(pydantic_object=EmotionSummary)
+
+    prompt_template = PromptTemplate(
+        template="""
 너는 감정 분석 전문가야. 아래는 사용자의 하루치 대화 내용이야:
 
-{combined_text}
+{conversation}
 
 [지침 사항](필수적으로 지켜야함)
 - "summary"는 오늘 하루의 감정 흐름을 구체적인 사례와 감정 표현을 중심으로 풍부하게 서술해줘.
@@ -70,66 +76,40 @@ async def summarize_day_conversation(messages: List[str], user_id: str, date: st
 "encouragement"는 오늘 "summary" 내용과 "feedback"을 바탕으로 응원의 말이나 사용자에게
 도움이 되는 말을 해줘. 최대 3~4문장으로 끝내도록 해줘 내용이 짧으면 1~2문장으로 끝내도 좋아.
 
-감정 벡터 점수가 똑같은 숫자로 나오지 안도록 해줘.
+감정 벡터 점수가 똑같은 숫자로 나오지 않도록 해줘.
 
-다음 정보를 JSON 형식으로 정확하게 출력해줘 (key는 영문, 값은 소수점 둘째자리까지):
+{format_instructions}
+""",
+        input_variables=["conversation"],
+        partial_variables={"format_instructions": parser.get_format_instructions()},
+    )
 
-예시:
-{{
-  "joy": 0.33,
-  "sadness": 0.15,
-  "anger": 0.10,
-  "anxiety": 0.62,
-  "stable": 0.33,
-  "summary": "하루 동안 불안이 많이 느껴졌고, 직업에 대한 걱정이 컸습니다.",
-  "feedback": "불안할 땐 호흡을 가다듬고 잠시 산책을 해보세요.",
-  "encouragement": "오늘도 잘 버텨주셔서 고마워요."
-}}
-"""
-
-    response = llm.invoke(prompt)
-    raw_output = response.content.strip()
-    print("🧠 GPT 응답 원문:\n", raw_output)
-
-    # GPT 응답이 ```json 또는 ``` 으로 감싸져 있는 경우 제거
-    if raw_output.startswith("```json"):
-        raw_output = raw_output.lstrip("```json").rstrip("```").strip()
-    elif raw_output.startswith("```"):
-        raw_output = raw_output.lstrip("```").rstrip("```").strip()
+    prompt = prompt_template.format(conversation=combined_text)
 
     try:
         loop = asyncio.get_event_loop()
-        # 동기 GPT 호출을 별도 스레드에서 실행
         response = await loop.run_in_executor(None, lambda: llm.invoke(prompt))
-        raw_output = response.content.strip()
-
-        print("🧠 GPT 응답 원문:\n", raw_output)
-
-        if raw_output.startswith("```json"):
-            raw_output = raw_output.lstrip("```json").rstrip("```").strip()
-        elif raw_output.startswith("```"):
-            raw_output = raw_output.lstrip("```").rstrip("```").strip()
-
-        parsed = json.loads(raw_output)
-        main_emotion = convert_to_main_emotion(parsed)
+        parsed_dict = parser.parse(response.content)
 
         return {
             "USER_ID": user_id,
             "DATE": date,
-            "MAIN_EMOTION": main_emotion,
-            "SCORE": max(parsed["joy"], parsed["sadness"], parsed["anger"], parsed["anxiety"]),
-            "STABLE": parsed["stable"],
-            "JOY": parsed["joy"],
-            "SADNESS": parsed["sadness"],
-            "ANGER": parsed["anger"],
-            "ANXIETY": parsed["anxiety"],
-            "SUMMARY": parsed["summary"],
-            "FEEDBACK": parsed["feedback"],
-            "ENCOURAGEMENT": parsed["encouragement"]
+            "MAIN_EMOTION": convert_to_main_emotion(parsed_dict),
+            "SCORE": max(parsed_dict['joy'], parsed_dict['sadness'], parsed_dict['anger'], parsed_dict['anxiety']),
+            "STABLE": parsed_dict['stable'],
+            "JOY": parsed_dict['joy'],
+            "SADNESS": parsed_dict['sadness'],
+            "ANGER": parsed_dict['anger'],
+            "ANXIETY": parsed_dict['anxiety'],
+            "SUMMARY": parsed_dict['summary'],
+            "FEEDBACK": parsed_dict['feedback'],
+            "ENCOURAGEMENT": parsed_dict['encouragement']
         }
+
     except Exception as e:
-        print("GPT JSON 파싱 실패:", str(e))
+        print("❌ GPT JSON 파싱 실패:", str(e))
         raise ValueError(f"GPT 응답 파싱 실패: {e}")
+
     
     
 # 최근 감정 흐름 요약 텍스트 반환
