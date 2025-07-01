@@ -36,11 +36,14 @@ async def save_or_update_daily_report(db: Session, user_id: str, date_str: str, 
     def sync_save(db: Session, user_id: str, date_str: str, result: dict):
         try:
             date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+            
+            # 기존 리포트 존재 여부 확인
             existing = db.query(DailyEmotionReport).filter(
                 DailyEmotionReport.USER_ID == user_id,
                 DailyEmotionReport.DATE == date_obj
             ).first()
 
+            # 저장할 값 정리
             result_to_save = {
                 "USER_ID": user_id,
                 "DATE": date_obj,
@@ -56,7 +59,8 @@ async def save_or_update_daily_report(db: Session, user_id: str, date_str: str, 
                 "FEEDBACK": result.get("FEEDBACK"),
                 "ENCOURAGEMENT": result.get("ENCOURAGEMENT")
             }
-
+            
+            # UPDATE 또는 INSERT 수행
             if existing:
                 print("기존 리포트 있음 → UPDATE 강제 수행")
                 for key, value in result_to_save.items():
@@ -72,6 +76,7 @@ async def save_or_update_daily_report(db: Session, user_id: str, date_str: str, 
 
             db.commit()
 
+            # INSERT 또는 UPDATE 완료 로그
             if not existing:
                 db.refresh(report)
                 print("INSERT 완료 후 MAIN_EMOTION:", report.MAIN_EMOTION)
@@ -79,6 +84,7 @@ async def save_or_update_daily_report(db: Session, user_id: str, date_str: str, 
                 db.refresh(existing)
                 print("UPDATE 완료 후 MAIN_EMOTION:", existing.MAIN_EMOTION)
 
+            # 월간 리포트 자동 생성 조건 확인 (해당 월에 3개 이상이면)
             year = date_obj.year
             month = date_obj.month
             first_day = date(year, month, 1)
@@ -98,7 +104,8 @@ async def save_or_update_daily_report(db: Session, user_id: str, date_str: str, 
             db.rollback()
             print("DB 저장 실패:", str(e))
             raise
-
+    
+    # sync 함수를 run_in_executor로 비동기 래핑
     loop = asyncio.get_event_loop()
     await loop.run_in_executor(None, lambda: sync_save(db, user_id, date_str, result))
 
@@ -129,10 +136,14 @@ def gpt_generate_monthly_summary(avg_scores: dict, session_count: int, ym: str) 
     return res.choices[0].message.content.strip()
 
 # 4. 월간 리포트 생성 or 업데이트
+# - 해당 월의 Daily 리포트들을 평균내어 감정 통계 생성
+# - 가장 높은 감정을 대표 감정으로 지정
+# - GPT 총평과 함께 MonthlyEmotionReport에 저장
 def generate_monthly_report_from_daily(db: Session, user_id: str, year: int, month: int):
     first_day = date(year, month, 1)
     next_month = date(year + int(month == 12), (month % 12) + 1, 1)
 
+    # 해당 월의 일일 리포트 조회
     daily_reports = db.query(DailyEmotionReport).filter(
         DailyEmotionReport.USER_ID == user_id,
         DailyEmotionReport.DATE >= first_day,
@@ -143,6 +154,7 @@ def generate_monthly_report_from_daily(db: Session, user_id: str, year: int, mon
         print(f"{len(daily_reports)}건밖에 없어 월간 리포트 생략됨")
         return None
 
+    # 감정 벡터 평균 계산
     emotion_sum = defaultdict(float)
     for r in daily_reports:
         emotion_sum["joy"] += r.JOY
@@ -154,8 +166,9 @@ def generate_monthly_report_from_daily(db: Session, user_id: str, year: int, mon
     count = len(daily_reports)
     averages = {k: round(emotion_sum[k] / count, 3) for k in emotion_sum}
     summary = gpt_generate_monthly_summary(averages, count, f"{year}-{month:02d}")
-    dominant = max(averages, key=averages.get)
+    dominant = max(averages, key=averages.get) # 대표 감정 선정
 
+    # 기존 월간 리포트가 있으면 UPDATE, 없으면 INSERT
     existing = db.query(MonthlyEmotionReport).filter_by(user_id=user_id, year_months=first_day).first()
     if existing:
         existing.total_sessions = count
@@ -178,6 +191,7 @@ def generate_monthly_report_from_daily(db: Session, user_id: str, year: int, mon
     return existing if existing else report
 
 # 5. 전체 감정 리포트 요약 텍스트로 반환
+# - 날짜 + 대표 감정 + 요약문 조합으로 리스트 구성
 def get_all_summaries(user_id: str, db: Session) -> str:
     rows = (
         db.query(

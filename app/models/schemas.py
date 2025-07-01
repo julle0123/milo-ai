@@ -43,13 +43,15 @@ class MonthlyReportRequest(BaseModel):
     user_id: str
     
     
-# 감정 요약 응답 구조
+# 감정 요약 결과를 구조화하여 표현하는 Pydantic 모델
+# GPT 응답을 JsonOutputParser로 파싱한 후 구조 검증 및 활용에 사용
+# Field(...) --> 필수 입력값 (값 반드시 있어야 함)
 class EmotionSummary(BaseModel):
-    joy: float = Field(..., description="기쁨 점수 (0~1)")
-    sadness: float = Field(..., description="슬픔 점수 (0~1)")
-    anger: float = Field(..., description="분노 점수 (0~1)")
-    anxiety: float = Field(..., description="불안 점수 (0~1)")
-    stable: float = Field(..., description="안정 점수 (0~1)")
-    summary: str
-    feedback: str
-    encouragement: str
+    joy: float = Field(..., description="기쁨 점수 (0~1)")              # 하루 대화 중 기쁨 감정의 비율
+    sadness: float = Field(..., description="슬픔 점수 (0~1)")          # 하루 대화 중 슬픔 감정의 비율
+    anger: float = Field(..., description="분노 점수 (0~1)")            # 하루 대화 중 분노 감정의 비율
+    anxiety: float = Field(..., description="불안 점수 (0~1)")          # 하루 대화 중 불안 감정의 비율
+    stable: float = Field(..., description="안정 점수 (0~1)")           # 하루 대화 중 안정(평온) 감정의 비율
+    summary: str                                                      # 하루 전체 감정 흐름에 대한 요약 서술
+    feedback: str                                                     # 사용자의 감정 상태를 기반으로 한 조언/피드백
+    encouragement: str                                                # summary와 feedback을 종합한 응원/격려 문장

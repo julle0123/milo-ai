@@ -52,11 +52,14 @@ def convert_to_main_emotion(score_dict: Dict[str, float]) -> str:
     return max(five_emotion_scores.items(), key=lambda x: x[1])[0]
 
 # 하루치 대화 리스트를 GPT에게 넘겨 감정 요약 및 점수 추출
+# - 결과는 EmotionSummary 형식으로 구조화됨
+# - 반환값은 DB 저장용 dict 형식
 async def summarize_day_conversation(messages: List[str], user_id: str, date: str) -> Dict:
-    combined_text = "\n".join(messages)
+    combined_text = "\n".join(messages) # 하루 대화 내용을 한 텍스트로 결합
 
-    parser = JsonOutputParser(pydantic_object=EmotionSummary)
-
+    parser = JsonOutputParser(pydantic_object=EmotionSummary)  # GPT 응답 구조를 EmotionSummary로 파싱
+ 
+    # 프롬프트 구성 (지침 + 사용자 대화 삽입 + 출력 형식 포함)
     prompt_template = PromptTemplate(
         template="""
 너는 감정 분석 전문가야. 아래는 사용자의 하루치 대화 내용이야:
@@ -89,8 +92,9 @@ async def summarize_day_conversation(messages: List[str], user_id: str, date: st
     try:
         loop = asyncio.get_event_loop()
         response = await loop.run_in_executor(None, lambda: llm.invoke(prompt))
-        parsed_dict = parser.parse(response.content)
+        parsed_dict = parser.parse(response.content)# EmotionSummary 또는 dict로 파싱
 
+        # 파싱 결과를 DB 저장 형식(dict)으로 재구성
         return {
             "USER_ID": user_id,
             "DATE": date,

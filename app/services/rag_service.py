@@ -3,9 +3,9 @@ import os
 import httpx
 import asyncio
 from app.core.client import vectorstore  # vectorstore.asimilarity_search 지원 필요
-from app.services.emotion_service import analyze_emotion_gpt
+from app.services.emotion_service import analyze_emotion_gpt # 감정 태그 추출
 from qdrant_client import AsyncQdrantClient
-from qdrant_client.models import SearchRequest
+from qdrant_client.models import SearchRequest # (명시적으로 사용되지는 않지만 유지 가능)
 from dotenv import load_dotenv
 
 # 유사 사례 검색 함수 (RAG)
@@ -34,25 +34,33 @@ async def retrieve_similar_cases_for_rag(user_input: str, k: int = 3) -> str:
         
     return "\n".join(results)
 
+# 감정 회복 콘텐츠 추천 (예: 유튜브 영상, 명상 콘텐츠 등)
+# - 입력 문장을 OpenAI 임베딩 후 Qdrant에서 유사 콘텐츠 검색
+# - 결과는 "번호. 링크 + 설명" 형태로 정리되어 출력
 async def retrieve_emotion_recovery_contents(user_input: str, top_k: int = 3) -> str:
     """
     사용자의 입력을 OpenAI 임베딩 후, 감정 회복 콘텐츠에서 유사한 콘텐츠를 검색함.
     """
+    # 비동기 HTTP 클라이언트를 생성하고 OpenAI Embedding API 호출
     async with httpx.AsyncClient(timeout=10.0) as client:
+        
+        # OpenAI Embedding API에 POST 요청
         response = await client.post(
             "https://api.openai.com/v1/embeddings",
             headers={
-                "Authorization": f"Bearer {os.getenv('OPENAI_API_KEY')}",
-                "Content-Type": "application/json"
+                "Authorization": f"Bearer {os.getenv('OPENAI_API_KEY')}", # OpenAI 인증 토큰
+                "Content-Type": "application/json"                        # JSON 형식 명시
             },
             json={
                 "model": "text-embedding-3-small",
                 "input": user_input
             }
         )
+        # 응답에서 첫 번째 임베딩 벡터만 추출 (리스트 내 딕셔너리 구조)
+        # 응답 구조: {"data": [{"embedding": [...]}], ...}
         embedding = response.json()["data"][0]["embedding"]
 
-    # ✅ Qdrant 비동기 클라이언트로 유사 콘텐츠 검색
+    # Qdrant 비동기 클라이언트로 유사 콘텐츠 검색
     async_qdrant = AsyncQdrantClient(
         url=os.getenv("QDRANT_URL"),
         api_key=os.getenv("QDRANT_API_KEY")
@@ -65,6 +73,7 @@ async def retrieve_emotion_recovery_contents(user_input: str, top_k: int = 3) ->
         with_payload=True
     )
 
+    # 검색된 콘텐츠를 출력 포맷으로 정리 (번호. 링크 + 설명)
     output = ""
     for i, hit in enumerate(results, 1):
         payload = hit.payload
