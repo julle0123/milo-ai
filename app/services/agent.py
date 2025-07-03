@@ -107,7 +107,7 @@ async def chat_with_bot(
     system_text += (
         "\n\n[최근 감정 흐름 요약]\n" + trend +
         "\n\n[전체 감정 요약]\n" + full_summary +
-        "\n\n[규칙] 위 두 요약을 반드시 참고하여 사용자의 상태를 이해하고 대화에 반영하세요." +
+        "\n\n[규칙] 위 두 요약을 반드시 반영하여 사용자의 상태를 이해하고 대화에 반영하세요." +
         "\n\n[회복 콘텐츠 목록 ]\n" + recovery_candidates +
         "\n\n※ GPT가 보기에 사용자가 정서적 회복이 필요하다고 느껴진다면, 자연스럽게 대화에 녹여서 추천해 주세요. 사용자가 추천해 달라고 할 시에는 무조건 제공해야 합니다."
         
@@ -116,7 +116,7 @@ async def chat_with_bot(
     prompt = ChatPromptTemplate.from_messages([
         ("system", "{system_text}"),
         MessagesPlaceholder("history"),
-        ("system", "[참고할 유사 상담사례]\n{retrieved}"),
+        ("system", "[반드시 수행해야 할 상담사례]\n{retrieved}"),
         ("human", "{input}"),
         MessagesPlaceholder("agent_scratchpad")
     ])
