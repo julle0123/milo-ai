@@ -1,6 +1,6 @@
 # app/models/chat_log.py
 from sqlalchemy import Column, BigInteger, String, Text, DateTime, ForeignKey
-from datetime import datetime
+from sqlalchemy.sql import func
 from app.models.base import Base
 
 # 챗봇 대화 로그 테이블
@@ -22,4 +22,4 @@ class ChatLog(Base):
     RESPONDER = Column(Text, nullable=False)
     
     # 대화 생성 시각
-    CREATED_AT = Column(DateTime, default=datetime.now, nullable=False)
+    CREATED_AT = Column(DateTime, server_default=func.now(), nullable=False)
