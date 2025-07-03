@@ -37,19 +37,14 @@ async def chat(req: ChatRequest, db: Session = Depends(get_db)):
 # 첫 진입 시 사용자에게 인사말 + 감정 흐름 요약 제공
 @router.get("/init", response_model=ChatResponse)
 def chat_initial_greeting(user_id: str, db: Session = Depends(get_db)):
-    # 1. 사용자 닉네임 조회
     nickname = get_user_nickname(user_id, db)
 
-    # 2. 최근 감정 흐름 요약 텍스트 생성
-    trend = get_emotion_trend_text(user_id, db)
-
-    # 3. 한국(KST) 기준 오늘/어제 날짜 계산
     korea = pytz.timezone("Asia/Seoul")
     now_kst = datetime.now(korea)
     today = now_kst.date()
     yesterday = today - timedelta(days=1)
 
-    # 4. 오늘/어제 감정 리포트 조회
+    # 오늘/어제 리포트
     today_report = db.query(DailyEmotionReport).filter(
         DailyEmotionReport.USER_ID == user_id,
         DailyEmotionReport.DATE == today
@@ -60,21 +55,35 @@ def chat_initial_greeting(user_id: str, db: Session = Depends(get_db)):
         DailyEmotionReport.DATE == yesterday
     ).first()
 
-    # 5. 조건에 따른 인삿말 분기
-    if today_report is not None:
+    # 최근 기록 중 가장 최신 날짜 조회
+    last_report = db.query(DailyEmotionReport).filter(
+        DailyEmotionReport.USER_ID == user_id
+    ).order_by(DailyEmotionReport.DATE.desc()).first()
+
+    # 감정 흐름 요약
+    trend = get_emotion_trend_text(user_id, db)
+
+    # 인삿말 분기
+    if today_report:
         message = (
             f"{nickname}님, 방금 전까지 '{today_report.MAIN_EMOTION}' 감정을 느끼신 것 같아요. "
             f"대화를 이어가 볼까요?"
         )
-    elif yesterday_report is not None:
+    elif yesterday_report:
         message = (
-            f"{nickname}님, 어제는 '{yesterday_report.MAIN_EMOTION}' 감정이 드셨던 것 같아요. "
+            f"{nickname}님, 어제는 '{yesterday_report.MAIN_EMOTION}' 감정을 느끼셨던 것 같아요. "
             f"오늘은 어떤 기분이신가요?"
         )
+    elif last_report:
+        days_since = (today - last_report.DATE).days
+        if days_since <= 3:
+            message = f"{nickname}님, 며칠 만에 다시 뵙네요. 잘 지내셨어요?"
+        elif days_since <= 7:
+            message = f"{nickname}님, 일주일 가까이 소식이 없었네요. 무슨 일 있으셨어요?"
+        else:
+            message = f"{nickname}님, 오랜만이에요. 다시 찾아와 주셔서 반가워요."
     else:
         message = f"{nickname}님, 처음 만났네요. 편하게 이야기 나눠보면 좋겠어요."
 
-    # 6. 감정 흐름 요약 추가
     message += f"\n\n[최근 감정 흐름 요약]\n{trend}"
-
     return ChatResponse(output=message)
