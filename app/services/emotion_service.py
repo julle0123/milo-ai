@@ -61,7 +61,7 @@ async def summarize_day_conversation(messages: List[str], user_id: str, date: st
  
     # 프롬프트 구성 (지침 + 사용자 대화 삽입 + 출력 형식 포함)
     prompt_template = PromptTemplate(
-        template="""
+    template="""
 너는 감정 분석 전문가야. 아래는 사용자의 하루치 대화 내용이야:
 
 {conversation}
@@ -71,21 +71,20 @@ async def summarize_day_conversation(messages: List[str], user_id: str, date: st
   - 단순히 "기뻤다", "불안했다" 로 끝나면 안되고, 무엇 때문에 그런 감정을 느꼈는지도 꼭 포함해줘.
   - 문장 수는 최소 4~5문장 이상으로, 전체 흐름이 느껴지도록 작성해줘.
   - 너무 일반적인 말보다 대화 내용에 맞춘 요약을 해줘야 해.
-  - 절대 적으로 내용이 빠지면 안돼.
 
-"feedback"은 말 그대로 피드백 해주면 되는데 예시 문장 처럼 너무 짧거나 그러면 안돼.
-사용자에게 진심으로 도움이 될만한 피드백을 해줘야 해. 
+- "feedback"은 사용자의 상태에 진심으로 도움될만한 현실적인 조언으로 작성해줘. 너무 짧거나 뻔하지 않게 해줘.
 
-"encouragement"는 오늘 "summary" 내용과 "feedback"을 바탕으로 응원의 말이나 사용자에게
-도움이 되는 말을 해줘. 최대 3~4문장으로 끝내도록 해줘 내용이 짧으면 1~2문장으로 끝내도 좋아.
+- "encouragement"는 summary와 feedback을 기반으로, 오늘을 잘 마무리할 수 있도록 격려하는 말로 1~4문장 내로 따뜻하게 작성해줘.
 
-감정 벡터 점수가 똑같은 숫자로 나오지 않도록 해줘.
+- 감정 벡터 점수는 오늘 대화의 표현된 정서 강도에 따라 다르게 생성해줘.
+- 이전과 비슷하거나 동일한 점수가 반복되면 안되고, 실제 감정 뉘앙스를 반영해 다양한 점수 분포를 보여줘야 해.
+- 모든 감정 점수는 0.0~1.0 사이로 균형 있게 작성해줘.
 
 {format_instructions}
 """,
-        input_variables=["conversation"],
-        partial_variables={"format_instructions": parser.get_format_instructions()},
-    )
+    input_variables=["conversation"],
+    partial_variables={"format_instructions": parser.get_format_instructions()},
+)
 
     prompt = prompt_template.format(conversation=combined_text)
 

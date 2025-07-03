@@ -65,6 +65,13 @@ async def save_or_update_daily_report(db: Session, user_id: str, date_str: str, 
             # UPDATE 또는 INSERT 수행
             if existing:
                 print("기존 리포트 있음 → UPDATE 강제 수행")
+                diffs = []
+                for emotion in ["JOY", "SADNESS", "ANGER", "ANXIETY", "STABLE"]:
+                    prev = getattr(existing, emotion)
+                    curr = result_to_save[emotion]
+                    delta = round(curr - prev, 4)
+                    diffs.append(f"{emotion}: {prev:.3f} → {curr:.3f} (Δ {delta:+.4f})")
+                print("[변동 로그]", " / ".join(diffs))
                 for key, value in result_to_save.items():
                     try:
                         setattr(existing, key, value)
