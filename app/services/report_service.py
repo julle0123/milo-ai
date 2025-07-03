@@ -1,6 +1,6 @@
 # app/services/report_service.py
 from sqlalchemy.orm import Session
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta, date, timezone
 from app.models.chat_log import ChatLog
 from app.models.daily_emotion_report import DailyEmotionReport
 from app.models.monthly_emotion_summary import MonthlyEmotionReport
@@ -10,6 +10,8 @@ from app.core.config import settings
 from collections import defaultdict
 import asyncio
 import json
+
+KST = timezone(timedelta(hours=9))
 
 # GPT 호출 클라이언트 (OpenAI API)
 client = OpenAI(api_key=settings.openai_api_key)
@@ -47,7 +49,7 @@ async def save_or_update_daily_report(db: Session, user_id: str, date_str: str, 
             result_to_save = {
                 "USER_ID": user_id,
                 "DATE": date_obj,
-                "CREATED_AT": datetime.now(),
+                "CREATED_AT": datetime.now(KST),
                 "MAIN_EMOTION": result.get("MAIN_EMOTION"),
                 "SCORE": result.get("SCORE"),
                 "STABLE": result.get("STABLE"),
