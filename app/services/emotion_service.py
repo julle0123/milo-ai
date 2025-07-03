@@ -5,13 +5,13 @@ import asyncio
 from app.models.user import User
 from app.core.client import llm
 from sqlalchemy.orm import Session
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from app.models.schemas import EmotionSummary
 from app.models.daily_emotion_report import DailyEmotionReport
 from langchain_core.output_parsers import JsonOutputParser
 from langchain.prompts import PromptTemplate
 
-
+KST = timezone(timedelta(hours=9))
 # 문장 단위 감정 분류용 (6종)
 EMOTION_CATEGORIES = ["기쁨", "불안", "분노", "슬픔", "상처", "당황"]
 
@@ -78,6 +78,7 @@ async def summarize_day_conversation(messages: List[str], user_id: str, date: st
 
 - 감정 벡터 점수는 오늘 대화의 표현된 정서 강도에 따라 다르게 생성해줘.
 - 이전과 비슷하거나 동일한 점수가 반복되면 안되고, 실제 감정 뉘앙스를 반영해 다양한 점수 분포를 보여줘야 해.
+- 감정 점수는 떨어질수도있고 오를수도있어.
 - 모든 감정 점수는 0.0~1.0 사이로 균형 있게 작성해줘.
 
 {format_instructions}
@@ -120,7 +121,7 @@ async def summarize_day_conversation(messages: List[str], user_id: str, date: st
 def get_emotion_trend_text(user_id: str, db: Session) -> str:
 
 
-    today = datetime.now().date()
+    today = datetime.now(KST).date()
     week_ago = today - timedelta(days=6)
 
     reports = db.query(DailyEmotionReport).filter(

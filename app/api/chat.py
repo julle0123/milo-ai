@@ -1,7 +1,7 @@
 # app/api/chat.py
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import pytz
 
 from app.models.schemas import ChatRequest, ChatResponse
@@ -11,6 +11,8 @@ from app.models.daily_emotion_report import DailyEmotionReport
 from app.core.db import get_db
 from app.services.emotion_service import get_user_nickname, get_emotion_trend_text
 
+
+KST = timezone(timedelta(hours=9))
 # 라우터 객체 생성 (챗봇 세션 관련 API 등록 용도)
 router = APIRouter()
 
@@ -39,8 +41,8 @@ async def chat(req: ChatRequest, db: Session = Depends(get_db)):
 def chat_initial_greeting(user_id: str, db: Session = Depends(get_db)):
     nickname = get_user_nickname(user_id, db)
 
-    korea = pytz.timezone("Asia/Seoul")
-    now_kst = datetime.now(korea)
+    # korea = pytz.timezone("Asia/Seoul")
+    now_kst = datetime.now(KST)
     today = now_kst.date()
     yesterday = today - timedelta(days=1)
 
