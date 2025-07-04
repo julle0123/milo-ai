@@ -11,4 +11,5 @@ python-dotenv
 tiktoken
 pymysql
 sqlalchemy
+langgraph
 pytz

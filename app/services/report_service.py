@@ -217,3 +217,4 @@ def get_all_summaries(user_id: str, db: Session) -> str:
 
     lines = [f"{r.DATE} - {r.MAIN_EMOTION}: {r.SUMMARY}" for r in rows]
     return "\n".join(lines)
+

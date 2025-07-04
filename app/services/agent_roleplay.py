@@ -53,8 +53,8 @@ def preload_roleplay_history(session_id: str, user_id: str, character_id: int, d
 #   (1) 세션 히스토리 존재 시 반환
 #   (2) 없을 경우, user_id + character_id + db 포함된 config 기반으로 preload 수행
 # - 결과: ChatMessageHistory 반환 (LangChain 메모리 사용 목적)
-def get_session_history(session_id: str, config: dict = None):
-    if session_id not in session_histories:
+def get_session_history(session_id: str, config: dict = None, reset: bool = False):
+    if reset or session_id not in session_histories:
         if config and "user_id" in config and "character_id" in config and "db" in config:
             preload_roleplay_history(
                 session_id,
@@ -66,6 +66,7 @@ def get_session_history(session_id: str, config: dict = None):
             session_histories[session_id] = ChatMessageHistory()
     return session_histories[session_id]
 
+
 # 역할극 체인 생성
 # - 입력: 프롬프트 텍스트, 유저/캐릭터 식별자, DB 세션
 # - 구성:
@@ -73,7 +74,11 @@ def get_session_history(session_id: str, config: dict = None):
 #   2. GPT 모델 연결 (ChatOpenAI)
 #   3. RunnableWithMessageHistory 로 메모리 포함 체인 구성
 # - 출력: RunnableWithMessageHistory 객체 반환
-def get_roleplay_chain(prompt_text: str, user_id: str, character_id: int, db: Session) -> RunnableWithMessageHistory:
+def get_roleplay_chain(prompt_text: str, user_id: str, character_id: int, db: Session, force_reset: bool = False) -> RunnableWithMessageHistory:
+    session_id = f"{user_id}_{character_id}"
+    if force_reset:
+        reset_session_history(session_id)
+
     prompt = ChatPromptTemplate.from_messages([
         ("system", prompt_text),
         MessagesPlaceholder(variable_name="history"),
@@ -81,13 +86,20 @@ def get_roleplay_chain(prompt_text: str, user_id: str, character_id: int, db: Se
     ])
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
-    return RunnableWithMessageHistory(
-        prompt | llm,
-        lambda session_id: get_session_history(session_id, {
+    def history_loader(sid):
+        return get_session_history(sid, {
             "user_id": user_id,
             "character_id": character_id,
             "db": db
-        }),
+        }, reset=force_reset)  # 🔥 여기에 reset 플래그 반영
+
+    return RunnableWithMessageHistory(
+        prompt | llm,
+        history_loader,
         input_messages_key="input",
         history_messages_key="history"
     )
+
+def reset_session_history(session_id: str):
+    if session_id in session_histories:
+        del session_histories[session_id]

@@ -1,5 +1,5 @@
 # app/models/user.py
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, String, DateTime, Boolean
 from datetime import datetime
 from app.models.base import Base  
 
@@ -12,7 +12,7 @@ class User(Base):
     USER_ID = Column(String(50), primary_key=True)
 
     # 비밀번호 (암호화 저장 권장)
-    PASSWORD = Column(String(100), nullable=False)
+    PASSWORD = Column(String(100), nullable=True)
 
     # 사용자 닉네임 (선택)
     NICKNAME = Column(String(50), nullable=True)
@@ -22,3 +22,9 @@ class User(Base):
 
     # 가입 시각
     CREATED_AT = Column(DateTime, default=datetime.utcnow)
+
+    EMOTION_PROMPT = Column(Boolean, default=False)
+    
+    provider = Column(String(20), default="local")
+    
+    provider_id = Column(String(100), nullable=True)

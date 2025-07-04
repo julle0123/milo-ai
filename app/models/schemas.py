@@ -22,6 +22,7 @@ class ChatRoleplayInput(BaseModel):
     character_id: int
     input: str
     session_id: Optional[str] = None
+    reset: Optional[bool] = False
 
 
 # 대화 로그 저장용 입력 스키마

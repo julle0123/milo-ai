@@ -7,7 +7,8 @@ from app.models.roleplaylog import RolePlayLog
 from app.models.rolecharacter import RoleCharacter
 from app.services.agent_roleplay import (
     get_roleplay_chain,
-    build_prompt_from_character
+    build_prompt_from_character,
+    reset_session_history
 )
 
 # 라우터 객체 생성 (역할 기반 챗봇 API)
@@ -35,7 +36,8 @@ def roleplay_chat(req: ChatRoleplayInput, db: Session = Depends(get_db)):
         prompt_text=prompt,
         user_id=req.user_id,
         character_id=req.character_id,
-        db=db
+        db=db,
+        force_reset=req.reset
     )
 
     # 4. 체인 실행 (GPT 응답 생성)
@@ -56,3 +58,8 @@ def roleplay_chat(req: ChatRoleplayInput, db: Session = Depends(get_db)):
 
     return ChatResponse(output=bot_reply)
 
+@router.post("/reset")
+def reset_role_session(user_id: str, character_id: int):
+    session_id = f"{user_id}_{character_id}"
+    reset_session_history(session_id)
+    return {"message": f"{session_id} 세션 히스토리를 초기화했습니다."}

@@ -2,6 +2,7 @@
 from typing import List, Dict
 import json
 import asyncio
+from app.models.chat_log import ChatLog
 from app.models.user import User
 from app.core.client import llm
 from sqlalchemy.orm import Session
@@ -133,16 +134,37 @@ def get_emotion_trend_text(user_id: str, db: Session) -> str:
     if not reports or len(reports) < 2:
         return "최근 감정 변화 데이터가 부족합니다."
 
-    lines = []
-    for r in reports:
-        lines.append(
-            f"{r.DATE} → 기쁨:{r.JOY:.2f}, 슬픔:{r.SADNESS:.2f}, 불안:{r.ANXIETY:.2f}, 안정:{r.STABLE:.2f}, 분노:{r.ANGER:.2f}"
-        )
-
-    return "\n".join(lines)
+    return "\n".join(
+        f"{r.DATE} → 기쁨:{r.JOY:.2f}, 슬픔:{r.SADNESS:.2f}, 불안:{r.ANXIETY:.2f}, 안정:{r.STABLE:.2f}, 분노:{r.ANGER:.2f}"
+        for r in reports
+    )
 
 # 사용자 닉네임 조회
 # - 닉네임이 없을 경우 기본값 "사용자님" 반환
 def get_user_nickname(user_id: str, db: Session) -> str:
     user = db.query(User).filter(User.USER_ID == user_id).first()
-    return user.NICKNAME if user else "사용자님"
+    return user.NICKNAME if user else "사용자"
+
+
+async def summarize_full_chat_history(user_id: str, db: Session) -> str:
+    logs = (
+        db.query(ChatLog)
+        .filter(ChatLog.USER_ID == user_id)
+        .order_by(ChatLog.CREATED_AT.asc())
+        .all()
+    )
+    if not logs:
+        return "이전에 나눈 대화 내용이 없습니다."
+
+    full_text = "\n".join(
+        f"사용자: {log.SENDER}\n챗봇: {log.RESPONDER}" for log in logs
+    )
+
+    summary_prompt = (
+        "다음은 사용자와 챗봇 사이의 대화 기록입니다. 이 대화를 2~3문단으로 요약해 주세요. "
+        "대화의 감정 흐름과 사용자의 고민/상태가 드러나도록 해 주세요.\n\n"
+        + full_text
+    )
+
+    result = await llm.ainvoke(summary_prompt)
+    return result.content if hasattr(result, "content") else str(result)
