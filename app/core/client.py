@@ -18,8 +18,8 @@ if os.getenv("LANGSMITH_TRACING") == "true":
 # LLM 클라이언트
 llm = ChatOpenAI(
     model="gpt-4o-mini",
-    temperature=0.1,
-    openai_api_key=settings.openai_api_key  # 이 부분!
+    temperature=0,
+    openai_api_key=settings.openai_api_key  
 )
   
 # 임베딩 모델 (문장 → 벡터 변환)
@@ -39,4 +39,4 @@ vectorstore = QdrantVectorStore(
 )
 
 # openai키 테스트용(env 연결 확인용)
-print("✅ OpenAI KEY:", settings.openai_api_key)
+print("OpenAI KEY:", settings.openai_api_key)
