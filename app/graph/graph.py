@@ -37,6 +37,10 @@ agent_executor = AgentExecutor(
     verbose=True
 )
 
+async def generate_response_node(state):
+    return await generate_response(state)
+
+
 # LangGraph 상태 흐름 정의
 def build_graph(db):
     builder = StateGraph(ChatState)
@@ -57,7 +61,7 @@ def build_graph(db):
     # 노드 등록
     builder.add_node("load_context", load_context_node)
     builder.add_node("agent", agent_node)
-    builder.add_node("generate_response", generate_response)
+    builder.add_node("generate_response", generate_response_node)
 
     # 노드 연결
     builder.set_entry_point("load_context")

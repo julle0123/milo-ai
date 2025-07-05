@@ -2,9 +2,7 @@ from app.services.emotion_service import (
     get_user_nickname,
     get_emotion_trend_text,
     summarize_full_chat_history,
-    extract_emotion_label
 )
-from app.services.report_service import save_or_update_daily_report
 from app.services.rag_service import (
     retrieve_emotion_recovery_contents,
     retrieve_similar_cases_for_rag
