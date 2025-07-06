@@ -17,13 +17,14 @@ KST = timezone(timedelta(hours=9))
 EMOTION_CATEGORIES = ["기쁨", "불안", "분노", "슬픔", "상처", "당황"]
 
 # GPT 기반 감정 라벨링 + 원문 포함 문장 반환
-def analyze_emotion_gpt(user_input: str) -> str:
+async def analyze_emotion_gpt(user_input: str) -> str:
     prompt = (
         "다음 문장의 대표 감정을 반드시 아래 6개 중 하나로만 한글 한 단어로 출력해줘.\n"
         "기쁨, 불안, 분노, 슬픔, 상처, 당황 중 택1\n"
         f"문장: {user_input}\n감정: "
     )
-    emotion = llm.invoke(prompt).content.strip()
+    result = await llm.ainvoke(prompt)
+    emotion = result.content.strip()
     if emotion not in EMOTION_CATEGORIES:
         emotion = "불안"
     return f"[감정: {emotion}] {user_input}"

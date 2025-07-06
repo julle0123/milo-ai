@@ -15,24 +15,25 @@ from dotenv import load_dotenv
 # - 검색된 응답은 "[감정] 응답문장" 형태로 정리되어 리턴됨
 # - 검색 결과가 없을 경우는 안내 문구 반환
 async def retrieve_similar_cases_for_rag(user_input: str, k: int = 3) -> str:
-    """
-    감정 분석 결과가 포함된 문장을 기반으로 Qdrant에서 유사 사례 검색
-    """
-    query = await asyncio.to_thread(analyze_emotion_gpt, user_input)
-    
-    # Qdrant를 통한 벡터 유사도 기반 문서 검색
-    docs = await vectorstore.asimilarity_search(query, k=k)
-    if not docs:
-        return "유사한 상담 사례를 찾을 수 없습니다."
+    try:
+        query = await analyze_emotion_gpt(user_input)
+        print(f"[✅ 쿼리 생성됨] {query}")
 
-    # 검색된 문서에서 감정 라벨 + 챗봇 응답 추출
-    results = []
-    for doc in docs:
-        answer = doc.metadata.get("bot_response") or doc.page_content or ""
-        emotion = doc.metadata.get("emotion", "")
-        results.append(f"[{emotion}] {answer}")
-        
-    return "\n".join(results)
+        docs = await vectorstore.asimilarity_search(query, k=k)
+        if not docs:
+            print("⚠️ Qdrant에서 문서 없음")
+            return "유사한 상담 사례를 찾을 수 없습니다."
+
+        results = []
+        for doc in docs:
+            answer = doc.metadata.get("bot_response") or doc.page_content or ""
+            emotion = doc.metadata.get("emotion", "")
+            results.append(f"[{emotion}] {answer}")
+
+        return "\n".join(results)
+    except Exception as e:
+        print(f"❌ retrieve_similar_cases_for_rag() 오류: {e}")
+        return "[유사 사례 오류 발생]"
 
 # 감정 회복 콘텐츠 추천 (예: 유튜브 영상, 명상 콘텐츠 등)
 # - 입력 문장을 OpenAI 임베딩 후 Qdrant에서 유사 콘텐츠 검색
