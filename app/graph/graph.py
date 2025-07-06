@@ -2,7 +2,7 @@
 
 from langgraph.graph import StateGraph
 from app.graph.state import ChatState
-from app.graph.nodes import get_load_context_node, get_respond_node  # ✅ 수정
+from app.graph.nodes import get_load_context_node, get_respond_node  
 from sqlalchemy.orm import Session
 
 def build_graph(db: Session):

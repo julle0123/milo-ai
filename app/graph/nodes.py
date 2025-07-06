@@ -73,3 +73,13 @@ async def generate_response(state: ChatState) -> ChatState:
         "output": response.content,
         "history": history + [input_msg, response]
     }
+    
+def get_load_context_node(db: Session):
+    async def wrapped(state: ChatState) -> ChatState:
+        return await load_context(state, db)
+    return wrapped
+
+def get_respond_node():
+    async def wrapped(state: ChatState) -> ChatState:
+        return await generate_response(state)
+    return wrapped
