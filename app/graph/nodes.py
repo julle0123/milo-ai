@@ -22,7 +22,7 @@ async def load_context(state: ChatState, db: Session) -> ChatState:
     user_input = state["user_input"]
     persona = state.get("persona", "emotional")
 
-    # 동기 작업은 바로 처리d
+    # 동기 작업은 바로 처리
     nickname = get_user_nickname(user_id, db)
     trend = get_emotion_trend_text(user_id, db)
 

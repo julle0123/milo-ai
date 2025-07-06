@@ -13,7 +13,7 @@ import json
 
 KST = timezone(timedelta(hours=9))
 
-# GPT 호출 클라이언트 (OpenAI API)d
+# GPT 호출 클라이언트 (OpenAI API)
 client = OpenAI(api_key=settings.openai_api_key)
 
 # 1. 하루 동안의 대화 메시지 추출

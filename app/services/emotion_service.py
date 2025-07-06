@@ -13,7 +13,7 @@ from langchain_core.output_parsers import JsonOutputParser
 from langchain.prompts import PromptTemplate
 
 KST = timezone(timedelta(hours=9))
-# 문장 단위 감정 분류용 (6종)d
+# 문장 단위 감정 분류용 (6종)
 EMOTION_CATEGORIES = ["기쁨", "불안", "분노", "슬픔", "상처", "당황"]
 
 # GPT 기반 감정 라벨링 + 원문 포함 문장 반환
