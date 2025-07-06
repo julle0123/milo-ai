@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 def build_graph(db: Session):
     builder = StateGraph(ChatState)
 
-    # ✅ 노드 함수 가져오기
+    # ✅ 노드 함수 가져오기d
     load_node = get_load_context_node(db)
     respond_node = get_respond_node()
 

@@ -3,7 +3,7 @@ from app.graph.state import ChatState
 from sqlalchemy.orm import Session
 import uuid
 
-# LangGraph 실행 진입점
+# LangGraph 실행 진입점d
 async def run_chat(user_input: str, user_id: str, db: Session) -> str:
     session_id = user_id or str(uuid.uuid4())
     state: ChatState = {

@@ -17,11 +17,11 @@ from dotenv import load_dotenv
 async def retrieve_similar_cases_for_rag(user_input: str, k: int = 3) -> str:
     try:
         query = await analyze_emotion_gpt(user_input)
-        print(f"[✅ 쿼리 생성됨] {query}")
+        print(f"[쿼리 생성됨] {query}")
 
         docs = await vectorstore.asimilarity_search(query, k=k)
         if not docs:
-            print("⚠️ Qdrant에서 문서 없음")
+            print("Qdrant에서 문서 없음")
             return "유사한 상담 사례를 찾을 수 없습니다."
 
         results = []
@@ -32,7 +32,7 @@ async def retrieve_similar_cases_for_rag(user_input: str, k: int = 3) -> str:
 
         return "\n".join(results)
     except Exception as e:
-        print(f"❌ retrieve_similar_cases_for_rag() 오류: {e}")
+        print(f"retrieve_similar_cases_for_rag() 오류: {e}")
         return "[유사 사례 오류 발생]"
 
 # 감정 회복 콘텐츠 추천 (예: 유튜브 영상, 명상 콘텐츠 등)
