@@ -29,9 +29,9 @@ async def load_context(state: ChatState, db: Session) -> ChatState:
     loop = asyncio.get_event_loop()
 
     # GPT/벡터 작업 병렬 처리
-    summary_task = loop.run_in_executor(None, lambda: summarize_full_chat_history(user_id, db))
-    recovery_task = retrieve_emotion_recovery_contents(user_input)  # 이미 async
-    retrieved_task = retrieve_similar_cases_for_rag(user_input)     # 이미 async
+    summary_task = summarize_full_chat_history(user_id, db)
+    recovery_task = retrieve_emotion_recovery_contents(user_input)  
+    retrieved_task = retrieve_similar_cases_for_rag(user_input)     
 
     summary, recovery, retrieved = await asyncio.gather(summary_task, recovery_task, retrieved_task)
 
