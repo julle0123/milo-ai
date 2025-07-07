@@ -134,13 +134,12 @@ def gpt_generate_monthly_summary(avg_scores: dict, session_count: int, ym: str) 
     """
 
     res = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-4o",
         messages=[
             {"role": "system", "content": "당신은 공감에 기반한 심리상담가입니다."},
             {"role": "user", "content": prompt}
         ],
-        temperature=0.4,
-        max_tokens=400
+        temperature=0.4
     )
     return res.choices[0].message.content.strip()
 
