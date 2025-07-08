@@ -121,15 +121,16 @@ async def save_or_update_daily_report(db: Session, user_id: str, date_str: str, 
 # 3. GPT 기반 월간 요약 문장 생성
 def gpt_generate_monthly_summary(avg_scores: dict, session_count: int, ym: str) -> str:
     prompt = f"""
-    다음은 {ym} 한 달간 사용자의 감정 평균 점수입니다.
+    다음은 이번 {ym} 달 동안 사용자의 감정 평균 점수입니다.
     - 감정 점수: {avg_scores}
     - 총 상담 횟수: {session_count}
     이 데이터를 바탕으로 아래 내용을 작성해주세요:
     [지침 사항]
-    1) 점수 데이터를 바탕으로 하는건 좋으나 감정을 수치화, 점수화하여 적지말것.
-    1) 한 문단 총평 (따뜻하고 공감되는 어조)
-    2) 긍정적 변화를 말해주세요. 
-    3) 개선을 위한 제안 2가지
+    1) 이번 {ym} 달 동안의 총평을 적어주세요.
+    2) 점수 데이터를 바탕으로 하는건 좋으나 감정을 수치화, 점수화하여 적지말것.
+    3) 한 문단 총평 (따뜻하고 공감되는 어조)
+    4) 긍정적 변화를 말해주세요. 
+    5) 개선을 위한 제안 2가지
     각 항목을 줄바꿈으로 구분하세요.
     """
 

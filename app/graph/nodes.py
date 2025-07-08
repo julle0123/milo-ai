@@ -38,8 +38,8 @@ async def load_context(state: ChatState, db: Session) -> ChatState:
     system_text = system_text.replace("{nickname}", nickname)
     system_text += (
         f"\n\n[최근 감정 흐름 요약]\n{trend}"
-        f"\n\n[전체 감정 요약]\n{summary}"
-        f"\n\n[회복 콘텐츠 목록]\n{recovery}"
+        f"\n\n[전체 내용 요약]\n{summary}"
+        f"\n\n[회복 콘텐츠 목록 사용자가 원하거나 위험단어 감지 시 추천![중요!!]]\n{recovery}"
         f"\n\n[규칙] 위 정보를 반영해 정서적 피드백을 제공하세요."
     )
 
