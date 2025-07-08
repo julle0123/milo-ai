@@ -152,7 +152,7 @@ async def summarize_full_chat_history(user_id: str, db: Session) -> str:
         db.query(ChatLog)
         .filter(ChatLog.USER_ID == user_id)
         .order_by(ChatLog.CREATED_AT.asc())
-        .all()
+        .all()[::-1]  # 시간순 정렬
     )
     if not logs:
         return "이전에 나눈 대화 내용이 없습니다."
@@ -162,7 +162,7 @@ async def summarize_full_chat_history(user_id: str, db: Session) -> str:
     )
 
     summary_prompt = (
-        "다음은 사용자와 챗봇 사이의 대화 기록입니다. 이 대화를 2~3문단으로 요약해 주세요. "
+        "다음은 사용자와 챗봇 사이의 대화 기록입니다. 이 대화를 한 문단으로 요약해 주세요. "
         "대화의 감정 흐름과 사용자의 고민/상태가 드러나도록 해 주세요.\n\n"
         + full_text
     )

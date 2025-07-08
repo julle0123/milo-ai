@@ -26,8 +26,6 @@ async def load_context(state: ChatState, db: Session) -> ChatState:
     nickname = get_user_nickname(user_id, db)
     trend = get_emotion_trend_text(user_id, db)
 
-    loop = asyncio.get_event_loop()
-
     # GPT/벡터 작업 병렬 처리
     summary_task = summarize_full_chat_history(user_id, db)
     recovery_task = retrieve_emotion_recovery_contents(user_input)  

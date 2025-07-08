@@ -17,7 +17,7 @@ if os.getenv("LANGSMITH_TRACING") == "true":
     
 # LLM 클라이언트
 llm = ChatOpenAI(
-    model="gpt-4o",
+    model="gpt-4o-mini",
     temperature=0,
     openai_api_key=settings.openai_api_key  
 )
