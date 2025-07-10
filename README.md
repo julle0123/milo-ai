@@ -93,17 +93,17 @@
 <table>
 <tr>
   <td align="center"><img src="https://github.com/user-attachments/assets/870979ed-ebfc-422d-a4d0-31590f179da4" width="200"/><br/>로그인</td>
-  <td align="center"><img src="https://github.com/user-attachments/assets/1267be99-cc0c-490e-8cc8-350f0e0b997f" width="200"/><br/>메인 화면</td>
+  <td align="center"><img src="https://github.com/user-attachments/assets/79ddf224-9442-46e7-9a09-e3ac451b8d0d" width="200"/><br/>소셜로그인</td>
   <td align="center"><img src="https://github.com/user-attachments/assets/8c13527b-d711-47de-944e-1cab9f73b29f" width="200"/><br/>비밀번호 찾기</td>
   <td align="center"><img src="https://github.com/user-attachments/assets/9e59fb33-529d-4cd2-9d9c-09f62f4c4392" width="200"/><br/>아이디 찾기</td>
   <td align="center"><img src="https://github.com/user-attachments/assets/2bae1163-dcc2-4117-9bcc-9c92a0294070" width="200"/><br/>회원가입</td>
 </tr>
 <tr>
+  <td align="center"><img src="https://github.com/user-attachments/assets/1267be99-cc0c-490e-8cc8-350f0e0b997f" width="200"/><br/>메인 화면</td>
   <td align="center"><img src="https://github.com/user-attachments/assets/131eabc3-1203-475e-9ae5-4fc6e6644509" width="200"/><br/>상담 챗봇</td>
   <td align="center"><img src="https://github.com/user-attachments/assets/208a6a29-181b-48a7-bf38-5922b6440954" width="200"/><br/>하루 감정 리포트</td>
   <td align="center"><img src="https://github.com/user-attachments/assets/4ef059ef-d83c-4dab-8f8e-5139f9ae6921" width="200"/><br/>하루 감정 리포트 달력</td>
   <td align="center"><img src="https://github.com/user-attachments/assets/a181baf0-acf8-4908-b7b3-60290632c7fa" width="200"/><br/>감정 아카이브</td>
-  <td align="center"><img src="https://github.com/user-attachments/assets/1865d352-ae86-4296-b340-153552db38aa" width="200"/><br/>상담 스타일 변경</td>
 </tr>
 <tr>
   <td align="center"><img src="https://github.com/user-attachments/assets/d56c2abf-5a9f-4a9e-9796-a80acfa8a48c" width="200"/><br/>역할 정하기1</td>
@@ -116,7 +116,7 @@
   <td align="center"><img src="https://github.com/user-attachments/assets/c987293d-7871-4d9f-a35e-3a538936464f" width="200"/><br/>역할 챗봇</td>
   <td align="center"><img src="https://github.com/user-attachments/assets/209a2433-00f8-4a27-a192-ab89ce9701d8" width="200"/><br/>회복문장</td>
   <td align="center"><img src="https://github.com/user-attachments/assets/e637d784-c728-4e60-a484-7719377532f4" width="200"/><br/>설정</td>
-  <td align="center"><img src="https://github.com/user-attachments/assets/093747ae-02be-417b-bf0a-e9a16db6e221" width="200"/><br/>문의하기</td>
+  <td align="center"><img src="https://github.com/user-attachments/assets/1865d352-ae86-4296-b340-153552db38aa" width="200"/><br/>상담 스타일 변경</td>
   <td align="center"><img src="https://github.com/user-attachments/assets/a1f8c570-74de-41d8-b9f0-60d2c10993de" width="200"/><br/>회원탈퇴</td>
 </tr>
 </table>
@@ -129,7 +129,7 @@
 | **Frontend** | ![](https://img.shields.io/badge/HTML-E34F26?style=for-the-badge&logo=html5&logoColor=white) ![](https://img.shields.io/badge/CSS-1572B6?style=for-the-badge&logo=css3&logoColor=white) ![](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) ![](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black) ![](https://img.shields.io/badge/Chart.js-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white) <br> ![](https://img.shields.io/badge/axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white) ![](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)|
 | **Backend** | ![](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white) ![](https://img.shields.io/badge/SpringBoot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white) ![](https://img.shields.io/badge/JPA-007396?style=for-the-badge&logo=hibernate&logoColor=white) ![](https://img.shields.io/badge/SpringSecurity-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white) ![](https://img.shields.io/badge/Lombok-EC722E?style=for-the-badge&logo=lombok&logoColor=white) <br>![](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black) ![](https://img.shields.io/badge/RESTful_API-000000?style=for-the-badge) ![](https://img.shields.io/badge/CORS_Global-FFB300?style=for-the-badge) ![](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)|
 | **AI Server** | ![](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white) ![](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) ![](https://img.shields.io/badge/Pydantic-007EC6?style=for-the-badge) ![](https://img.shields.io/badge/SQLAlchemy-FFCA28?style=for-the-badge) ![](https://img.shields.io/badge/Uvicorn-000000?style=for-the-badge) |
-| **AI & LLM** | ![](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white) ![](https://img.shields.io/badge/LangChain-000000?style=for-the-badge) ![](https://img.shields.io/badge/AgentTool-0A0A0A?style=for-the-badge) ![](https://img.shields.io/badge/RAG-000000?style=for-the-badge) |
+| **AI & LLM** | ![](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white) ![](https://img.shields.io/badge/LangChain-000000?style=for-the-badge) ![](https://img.shields.io/badge/LangGraph-000000?style=for-the-badge) ![](https://img.shields.io/badge/AgentTool-0A0A0A?style=for-the-badge) ![](https://img.shields.io/badge/RAG-000000?style=for-the-badge) |
 | **Database** | ![](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white) ![](https://img.shields.io/badge/Qdrant-1A1A1A?style=for-the-badge) |
 | **Infra / Deploy** | ![](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white) ![](https://img.shields.io/badge/NaverCloud-03C75A?style=for-the-badge&logo=naver&logoColor=white) |
 | **개발 도구** | ![](https://img.shields.io/badge/IntelliJ-000000?style=for-the-badge&logo=intellijidea&logoColor=white) ![](https://img.shields.io/badge/VSCode-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white) ![](https://img.shields.io/badge/Google_Colab-F9AB00?style=for-the-badge&logo=googlecolab&logoColor=white) |
@@ -153,18 +153,20 @@
 
 | 단계 | 설명 |
 |------|------|
-| 1. 중복 제거 | 동일 문장 또는 유사도 0.95 이상 문장 필터링 |
-| 2. 비어 있는 행 제거 | 질문 또는 응답이 누락된 row 제거 |
-| 3. 감정 라벨 정제 | 대분류 감정만 추출 (예: "불안_긴장" → "불안") |
-| 4. 텍스트 분리 | 멀티턴 데이터를 싱글턴 데이터로 분리 |
+| 1. 텍스트 분리 | 멀티턴 데이터를 싱글턴 데이터로 분리 |
+| 2. 중복 제거 | 동일 문장 또는 유사도 0.95 이상 문장 필터링 |
+| 3. 비어 있는 행 제거 | 질문 또는 응답이 누락된 row 제거 |
+| 4. 감정 라벨 정제 | 대분류 감정만 추출 (예: "불안_긴장" → "불안") |
 | 5. 특수문자 제거 | `[^ㄱ-ㅎ가-힣a-zA-Z0-9\s]` 패턴으로 클렌징 |
 | 6. 분류용 데이터셋 생성 | 감정 분석 학습용 `text`, `label` 컬럼 구성 |
 
 ---
 ### 🧠 전처리한 데이터를 토대로 만든 감정분류 모델(hugging-face)
-- KCELECTRA 활용
-- 만들어진 모델로 데이터 전체 감정분류 적용
-- https://huggingface.co/Seonghaa/emotion-koelectra  --> 만든 감정분류 모델
+- 모델: `KcELECTRA-base`
+- 학습 데이터: 감성대화 말뭉치(27만 문장) + CounselGPT(2만 문장)
+- 라벨: 기쁨, 슬픔, 분노, 불안, 당황, 상처 (6대 감정)
+- 평가 지표: Accuracy 0.80 / Weighted F1 0.80
+- HuggingFace: [emotion-koelectra](https://huggingface.co/Seonghaa/emotion-koelectra)
 ---
 ### 🎯 최종 전처리 샘플
 
@@ -198,6 +200,13 @@ milp-ai/
 │  │ ├── client.py                     # openai 설정
 │  │ ├── config.py                     # Settings(.env)
 │  │ └── db.py                         # DB 연결 / 세션 관리
+│  ├── graph/                          # LangGraph 기반 Agent
+│  │ ├── graph.py                      # LangGraph 전체 흐름 구성
+│  │ ├── nodes.py                      # 처리 노드 함수 정의
+│  │ ├── prompt.py                     # 시스템 프롬프트 템플릿 정의
+│  │ ├── runner.py                     # Agent 실행 진입점
+│  │ ├── state.py                      # 공유 상태(State) 구조 정의
+│  │ └── tools.py                      # 외부 도구 및 기능 정의
 │  ├── models/                         # SQLAlchemy 모델
 │  │ ├── __init__.py                   # Python 패키지 인식용 파일 (import 가능하게 함)
 │  │ ├── base.py                       # Base 선언
@@ -213,7 +222,7 @@ milp-ai/
 │  │ ├── emotion_prompt_practical.txt  # 조언형(T) 프롬프트
 │  │ └── roleplay_prompt.txt           # 역할 챗봇 프롬프트
 │  ├── services/                       # 비즈니스 로직 처리
-│  │ ├── agent.py                      # AgentTool 기반 응답 생성
+│  │ ├── agent.py                      # AgentTool 기반 응답 생성 --> 전체 주석처리 됨
 │  │ ├── agent_roleplay.py             # 역할극 응답 처리
 │  │ ├── emotion_service.py            # 감정 분석/백터화
 │  │ ├── memory.py                     # 기억 공간
@@ -239,7 +248,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 # 3. FastAPI 실행
-uvicorn main:app --reload --port 8000
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 ---
 
@@ -289,6 +298,7 @@ uvicorn main:app --reload --port 8000
 | async def 기반으로 서비스 함수 수정 이후, 일부 DB 호출이나 OpenAI API 응답이 정상 동작하지 않음. | SQLAlchemy의 Session 객체는 기본적으로 동기이며, 이를 async 함수에서 그대로 사용할 경우 오류 발생. | 비동기 처리를 도입하되, DB 작업은 여전히 sync 방식으로 유지하거나 AsyncSession을 명확히 도입해야 함. 또는 asyncio.run() 사용을 피하고 명시적으로 await 처리해야 함. |
 | TrainingArguments 클래스의 evaluation_strategy 인자에서 오류가 발생 | TrainingArguments 클래스의 evaluation_strategy 인자가 eval_strategy로 변경되어 기존 코드에서 evaluation_strategy를 사용하면 다음과 같은 오류가 발생 | 코드에서 TrainingArguments를 정의할 때 evaluation_strategy를 eval_strategy로 변경하면 문제가 해결! |
 |EmotionSummary를 사용하여 GPT 응답을 구조화하고자 할 때, JsonOutputParser로 파싱한 후 .joy 같은 속성 접근 시 오류가 발생|- LangChain의 `JsonOutputParser`는 `pydantic_object=EmotionSummary` 옵션을 사용하더라도 내부적으로 parsing이 실패하면 **dict로 fallback** 되는 경우가 있음. 이때 `parsed.joy`처럼 **객체 속성**으로 접근하면 오류 발생 마찬가지로 `.dict()` 메서드도 **dict에는 존재하지 않기 때문에** 에러가 발생|모든 필드 접근을 딕셔너리 키 방식으로 변경 summary, feedback, encouragement 등 모든 필드를 parsed_dict['필드명'] 형태로 접근하도록 수정|
+|LangChain Agent 상담 응답 생성 시간이 느리며, 사용자 대기 시간이 12~17초 이상 발생 → 대화 몰입도 하락| 기존 LangChain Agent 구조에서는 Tool을 순차적으로 실행하고 각 Tool 실행마다 GPT 호출이 발생하여 총 3~5회 API 호출, 누적 지연 발생 → 병렬 가능 작업도 직렬로 처리됨|LangGraph 기반 노드 상태 머신 구조(StateGraph)로 전환하여 Tool별 처리 노드를 분리 → 최종 응답은 GPT 한 번만 호출하도록 구성하여 응답 시간 60~70% 감소|
 ---
 
 ## 👨‍👩‍👧‍👦 팀원 역할
