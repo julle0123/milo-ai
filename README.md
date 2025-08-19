@@ -166,7 +166,7 @@
 - 학습 데이터: 감성대화 말뭉치(27만 문장) + CounselGPT(2만 문장)
 - 라벨: 기쁨, 슬픔, 분노, 불안, 당황, 평온 (6대 감정)
 - 평가 지표: Accuracy 0.9831 / Weighted F1 0.9798
-- HuggingFace: [emotion-koelectra](https://huggingface.co/Seonghaa/korean-emotion-classifier-roberta)
+- HuggingFace: [korean-emotion-classifier-roberta](https://huggingface.co/Seonghaa/korean-emotion-classifier-roberta)
 ---
 ### 🎯 최종 전처리 샘플
 
